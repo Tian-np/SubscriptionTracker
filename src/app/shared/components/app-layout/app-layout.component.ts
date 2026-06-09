@@ -6,7 +6,7 @@ import { Select } from 'primeng/select';
 import { Toast } from 'primeng/toast';
 
 import { SUPPORTED_CURRENCIES } from '../../../core/models/currency.model';
-import { environment } from '../../../environments/environment';
+import { environment } from '../../../../environments/environment';
 import { NotificationService } from '../../../core/services/notification.service';
 import { PushNotificationService } from '../../../core/services/push-notification.service';
 import { SupabaseAuthService } from '../../../core/services/supabase-auth.service';
