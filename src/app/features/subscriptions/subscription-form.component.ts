@@ -1,9 +1,10 @@
 import { Component, effect, inject, input, output, signal } from '@angular/core';
-import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Button } from 'primeng/button';
 import { DatePicker } from 'primeng/datepicker';
 import { InputNumber } from 'primeng/inputnumber';
 import { InputText } from 'primeng/inputtext';
+import { Message } from 'primeng/message';
 import { Select } from 'primeng/select';
 import { Textarea } from 'primeng/textarea';
 import { ToggleSwitch } from 'primeng/toggleswitch';
@@ -17,6 +18,7 @@ import {
   SubscriptionStatus,
 } from '../../core/models/subscription.model';
 import { SubscriptionStore } from '../../core/stores/subscription.store';
+import { toLocalDateString } from '../../core/utils/date.util';
 
 @Component({
   selector: 'app-subscription-form',
@@ -27,6 +29,7 @@ import { SubscriptionStore } from '../../core/stores/subscription.store';
     DatePicker,
     InputNumber,
     InputText,
+    Message,
     Select,
     Textarea,
     ToggleSwitch,
@@ -37,27 +40,35 @@ import { SubscriptionStore } from '../../core/stores/subscription.store';
         <div class="sm:col-span-2">
           <label class="mb-1 block text-sm font-medium text-slate-700">ชื่อ</label>
           <input pInputText formControlName="name" class="w-full" placeholder="เช่น Netflix" />
+          @if (form.controls.name.touched && form.controls.name.errors?.['required']) {
+            <p class="mt-1 text-xs text-red-500">กรุณากรอกชื่อ</p>
+          }
         </div>
 
         <div>
           <label class="mb-1 block text-sm font-medium text-slate-700">หมวด</label>
           <p-select
-            formControlName="categoryId"
+            [formControl]="categoryControl"
             [options]="store.categories()"
             optionLabel="name"
             optionValue="id"
             placeholder="เลือกหมวด"
+            appendTo="body"
             class="w-full"
           />
+          @if (categoryControl.touched && categoryControl.errors?.['required']) {
+            <p class="mt-1 text-xs text-red-500">กรุณาเลือกหมวด</p>
+          }
         </div>
 
         <div>
           <label class="mb-1 block text-sm font-medium text-slate-700">สถานะ</label>
           <p-select
-            formControlName="status"
+            [formControl]="statusControl"
             [options]="statusOptions"
             optionLabel="label"
             optionValue="value"
+            appendTo="body"
             class="w-full"
           />
         </div>
@@ -65,20 +76,25 @@ import { SubscriptionStore } from '../../core/stores/subscription.store';
         <div>
           <label class="mb-1 block text-sm font-medium text-slate-700">จำนวนเงิน</label>
           <p-inputnumber
-            formControlName="amount"
+            [formControl]="amountControl"
             mode="decimal"
+            [min]="0.01"
             [minFractionDigits]="2"
             class="w-full"
           />
+          @if (amountControl.touched && amountControl.errors?.['min']) {
+            <p class="mt-1 text-xs text-red-500">จำนวนเงินต้องมากกว่า 0</p>
+          }
         </div>
 
         <div>
           <label class="mb-1 block text-sm font-medium text-slate-700">สกุลเงิน</label>
           <p-select
-            formControlName="currency"
+            [formControl]="currencyControl"
             [options]="currencyOptions"
             optionLabel="label"
             optionValue="value"
+            appendTo="body"
             class="w-full"
           />
         </div>
@@ -86,10 +102,11 @@ import { SubscriptionStore } from '../../core/stores/subscription.store';
         <div>
           <label class="mb-1 block text-sm font-medium text-slate-700">รอบบิล</label>
           <p-select
-            formControlName="billingCycle"
+            [formControl]="billingCycleControl"
             [options]="cycleOptions"
             optionLabel="label"
             optionValue="value"
+            appendTo="body"
             class="w-full"
           />
         </div>
@@ -97,25 +114,31 @@ import { SubscriptionStore } from '../../core/stores/subscription.store';
         <div>
           <label class="mb-1 block text-sm font-medium text-slate-700">วันตัดบัตรถัดไป</label>
           <p-datepicker
-            formControlName="nextBillingDate"
+            [formControl]="nextBillingDateControl"
             dateFormat="dd/mm/yy"
             [showIcon]="true"
+            appendTo="body"
             class="w-full"
           />
         </div>
 
         <div>
           <label class="mb-1 block text-sm font-medium text-slate-700">แจ้งเตือนก่อน (วัน)</label>
-          <p-inputnumber formControlName="remindDaysBefore" [min]="0" [max]="30" class="w-full" />
+          <p-inputnumber
+            [formControl]="remindDaysControl"
+            [min]="0"
+            [max]="30"
+            class="w-full"
+          />
         </div>
 
         <div class="flex items-center gap-3 sm:col-span-2">
-          <p-toggleswitch formControlName="isShared" />
+          <p-toggleswitch [formControl]="isSharedControl" />
           <label class="text-sm font-medium text-slate-700">Shared subscription</label>
         </div>
       </div>
 
-      @if (form.get('isShared')?.value) {
+      @if (isSharedControl.value) {
         <div class="rounded-xl border border-slate-200 bg-slate-50 p-4">
           <div class="mb-3 flex items-center justify-between">
             <p class="text-sm font-medium text-slate-700">สมาชิกที่แชร์</p>
@@ -165,15 +188,26 @@ import { SubscriptionStore } from '../../core/stores/subscription.store';
         <textarea pTextarea formControlName="notes" rows="2" class="w-full" placeholder="หมายเหตุเพิ่มเติม"></textarea>
       </div>
 
+      @if (store.error()) {
+        <p-message severity="error" [text]="store.error()!" />
+      }
+
       <div class="flex justify-end gap-2 pt-2">
         <p-button type="button" label="ยกเลิก" severity="secondary" [text]="true" (onClick)="cancelled.emit()" />
-        <p-button type="submit" [label]="subscription() ? 'บันทึก' : 'เพิ่ม'" icon="pi pi-check" [loading]="store.loading()" />
+        <p-button
+          type="submit"
+          [label]="subscription() ? 'บันทึก' : 'เพิ่ม'"
+          icon="pi pi-check"
+          [loading]="saving()"
+          [disabled]="form.invalid"
+        />
       </div>
     </form>
   `,
 })
 export class SubscriptionFormComponent {
   readonly subscription = input<Subscription | null>(null);
+  readonly formKey = input(0);
   readonly saved = output<void>();
   readonly cancelled = output<void>();
 
@@ -181,6 +215,7 @@ export class SubscriptionFormComponent {
   private readonly fb = inject(FormBuilder);
 
   readonly sharedMembers = signal<SharedMember[]>([]);
+  readonly saving = signal(false);
 
   readonly statusOptions = [
     { label: 'ใช้งานอยู่', value: 'active' as SubscriptionStatus },
@@ -196,10 +231,10 @@ export class SubscriptionFormComponent {
 
   readonly currencyOptions = SUPPORTED_CURRENCIES.map((c) => ({ label: c, value: c }));
 
-  readonly form = this.fb.nonNullable.group({
+  readonly form = this.fb.group({
     name: ['', Validators.required],
     categoryId: ['', Validators.required],
-    amount: [0, [Validators.required, Validators.min(0)]],
+    amount: [null as number | null, [Validators.required, Validators.min(0.01)]],
     currency: ['THB', Validators.required],
     billingCycle: ['monthly' as BillingCycle, Validators.required],
     nextBillingDate: [new Date(), Validators.required],
@@ -209,29 +244,25 @@ export class SubscriptionFormComponent {
     remindDaysBefore: [3, [Validators.required, Validators.min(0)]],
   });
 
+  readonly categoryControl = this.form.controls.categoryId as FormControl<string>;
+  readonly statusControl = this.form.controls.status as FormControl<SubscriptionStatus>;
+  readonly amountControl = this.form.controls.amount as FormControl<number | null>;
+  readonly currencyControl = this.form.controls.currency as FormControl<string>;
+  readonly billingCycleControl = this.form.controls.billingCycle as FormControl<BillingCycle>;
+  readonly nextBillingDateControl = this.form.controls.nextBillingDate as FormControl<Date>;
+  readonly remindDaysControl = this.form.controls.remindDaysBefore as FormControl<number>;
+  readonly isSharedControl = this.form.controls.isShared as FormControl<boolean>;
+
   constructor() {
     effect(() => {
       const sub = this.subscription();
+      const key = this.formKey();
+      void key;
+
       if (sub) {
-        this.form.patchValue({
-          ...sub,
-          nextBillingDate: new Date(sub.nextBillingDate),
-        });
-        this.sharedMembers.set([...sub.sharedMembers]);
+        this.loadEditForm(sub);
       } else {
-        this.form.reset({
-          name: '',
-          categoryId: '',
-          amount: 0,
-          currency: 'THB',
-          billingCycle: 'monthly',
-          nextBillingDate: new Date(),
-          status: 'active',
-          isShared: false,
-          notes: '',
-          remindDaysBefore: 3,
-        });
-        this.sharedMembers.set([]);
+        this.loadNewForm();
       }
     });
   }
@@ -256,25 +287,76 @@ export class SubscriptionFormComponent {
   }
 
   onSubmit(): void {
+    this.form.markAllAsTouched();
     if (this.form.invalid) return;
 
     const raw = this.form.getRawValue();
     const dto: CreateSubscriptionDto = {
-      ...raw,
-      nextBillingDate: this.toDateString(raw.nextBillingDate),
+      name: raw.name!,
+      categoryId: raw.categoryId!,
+      amount: raw.amount!,
+      currency: raw.currency!,
+      billingCycle: raw.billingCycle!,
+      nextBillingDate: toLocalDateString(raw.nextBillingDate!),
+      status: raw.status!,
+      isShared: raw.isShared!,
       sharedMembers: raw.isShared ? this.sharedMembers() : [],
+      notes: raw.notes || undefined,
+      remindDaysBefore: raw.remindDaysBefore!,
     };
 
+    this.saving.set(true);
     const existing = this.subscription();
-    if (existing) {
-      this.store.update(existing.id, dto);
-    } else {
-      this.store.create(dto);
-    }
-    this.saved.emit();
+    const op = existing ? this.store.update(existing.id, dto) : this.store.create(dto);
+
+    op.subscribe({
+      next: (result) => {
+        this.saving.set(false);
+        if (result) {
+          this.saved.emit();
+        }
+      },
+      error: () => {
+        this.saving.set(false);
+      },
+    });
   }
 
-  private toDateString(date: Date): string {
-    return date.toISOString().split('T')[0];
+  private loadNewForm(): void {
+    this.form.reset({
+      name: '',
+      categoryId: '',
+      amount: null,
+      currency: 'THB',
+      billingCycle: 'monthly',
+      nextBillingDate: new Date(),
+      status: 'active',
+      isShared: false,
+      notes: '',
+      remindDaysBefore: 3,
+    });
+    this.form.markAsUntouched();
+    this.form.markAsPristine();
+    this.sharedMembers.set([]);
+    this.saving.set(false);
+  }
+
+  private loadEditForm(sub: Subscription): void {
+    this.form.reset({
+      name: sub.name,
+      categoryId: sub.categoryId,
+      amount: sub.amount,
+      currency: sub.currency,
+      billingCycle: sub.billingCycle,
+      nextBillingDate: new Date(sub.nextBillingDate + 'T00:00:00'),
+      status: sub.status,
+      isShared: sub.isShared,
+      notes: sub.notes ?? '',
+      remindDaysBefore: sub.remindDaysBefore,
+    });
+    this.form.markAsUntouched();
+    this.form.markAsPristine();
+    this.sharedMembers.set([...sub.sharedMembers]);
+    this.saving.set(false);
   }
 }

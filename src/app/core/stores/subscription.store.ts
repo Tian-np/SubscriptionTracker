@@ -1,5 +1,5 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
-import { catchError, forkJoin, of, tap } from 'rxjs';
+import { catchError, forkJoin, Observable, of, tap } from 'rxjs';
 
 import { environment } from '../../../environments/environment';
 import { Category } from '../models/category.model';
@@ -153,40 +153,36 @@ export class SubscriptionStore {
       .subscribe();
   }
 
-  create(dto: CreateSubscriptionDto): void {
+  create(dto: CreateSubscriptionDto): Observable<Subscription | null> {
     this.loading.set(true);
-    this.subscriptionApi
-      .create(dto)
-      .pipe(
-        tap((created) => {
-          this.subscriptions.update((list) => [...list, created]);
-          this.loading.set(false);
-        }),
-        catchError((err: Error) => {
-          this.error.set(err.message);
-          this.loading.set(false);
-          return of(null);
-        }),
-      )
-      .subscribe();
+    this.error.set(null);
+    return this.subscriptionApi.create(dto).pipe(
+      tap((created) => {
+        this.subscriptions.update((list) => [...list, created]);
+        this.loading.set(false);
+      }),
+      catchError((err: Error) => {
+        this.error.set(err.message ?? 'ไม่สามารถเพิ่ม subscription ได้');
+        this.loading.set(false);
+        return of(null);
+      }),
+    );
   }
 
-  update(id: string, dto: UpdateSubscriptionDto): void {
+  update(id: string, dto: UpdateSubscriptionDto): Observable<Subscription | null> {
     this.loading.set(true);
-    this.subscriptionApi
-      .update(id, dto)
-      .pipe(
-        tap((updated) => {
-          this.subscriptions.update((list) => list.map((s) => (s.id === id ? updated : s)));
-          this.loading.set(false);
-        }),
-        catchError((err: Error) => {
-          this.error.set(err.message);
-          this.loading.set(false);
-          return of(null);
-        }),
-      )
-      .subscribe();
+    this.error.set(null);
+    return this.subscriptionApi.update(id, dto).pipe(
+      tap((updated) => {
+        this.subscriptions.update((list) => list.map((s) => (s.id === id ? updated : s)));
+        this.loading.set(false);
+      }),
+      catchError((err: Error) => {
+        this.error.set(err.message ?? 'ไม่สามารถอัปเดต subscription ได้');
+        this.loading.set(false);
+        return of(null);
+      }),
+    );
   }
 
   delete(id: string): void {

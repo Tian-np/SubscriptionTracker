@@ -28,43 +28,42 @@ import { NotificationPromptComponent } from '../notification-prompt/notification
   template: `
     <p-toast position="top-right" />
 
-    <div class="min-h-screen bg-slate-50">
-      <app-notification-prompt />
-      <header class="sticky top-0 z-50 border-b border-slate-200 bg-white/80 backdrop-blur-md">
-        <div class="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3 sm:px-6">
-          <div class="flex items-center gap-3">
+    <div class="min-h-dvh-safe bg-slate-50">
+      <header class="sticky top-0 z-50 border-b border-slate-200 bg-white/90 backdrop-blur-md pt-safe">
+        <div class="mx-auto flex max-w-7xl items-center justify-between gap-2 px-safe px-4 py-2.5 sm:gap-4 sm:px-6 sm:py-3">
+          <div class="flex min-w-0 items-center gap-2 sm:gap-3">
             <div
-              class="flex h-9 w-9 items-center justify-center rounded-xl bg-indigo-600 text-white shadow-sm"
+              class="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-indigo-600 text-white shadow-sm sm:h-9 sm:w-9"
             >
               <i class="pi pi-wallet text-sm"></i>
             </div>
-            <div>
-              <h1 class="text-lg font-semibold text-slate-900">SubTracker</h1>
+            <div class="min-w-0">
+              <h1 class="truncate text-base font-semibold text-slate-900 sm:text-lg">SubTracker</h1>
               <p class="hidden text-xs text-slate-500 sm:block">จัดการ subscription ของคุณ</p>
             </div>
           </div>
 
-          <nav class="flex items-center gap-1">
+          <nav class="flex shrink-0 items-center gap-0.5 sm:gap-1">
             <a
               routerLink="/"
               routerLinkActive="bg-indigo-50 text-indigo-700"
               [routerLinkActiveOptions]="{ exact: true }"
-              class="rounded-lg px-3 py-2 text-sm font-medium text-slate-600 transition hover:bg-slate-100"
+              class="rounded-lg p-2 text-sm font-medium text-slate-600 transition hover:bg-slate-100 sm:px-3"
             >
-              <i class="pi pi-home mr-1.5"></i>
+              <i class="pi pi-home sm:mr-1.5"></i>
               <span class="hidden sm:inline">Dashboard</span>
             </a>
             <a
               routerLink="/subscriptions"
               routerLinkActive="bg-indigo-50 text-indigo-700"
-              class="rounded-lg px-3 py-2 text-sm font-medium text-slate-600 transition hover:bg-slate-100"
+              class="rounded-lg p-2 text-sm font-medium text-slate-600 transition hover:bg-slate-100 sm:px-3"
             >
-              <i class="pi pi-list mr-1.5"></i>
+              <i class="pi pi-list sm:mr-1.5"></i>
               <span class="hidden sm:inline">Subscriptions</span>
             </a>
           </nav>
 
-          <div class="flex items-center gap-2">
+          <div class="flex shrink-0 items-center gap-1 sm:gap-2">
             @if (useSupabase && auth.isAuthenticated()) {
               <p-button
                 icon="pi pi-sign-out"
@@ -91,14 +90,16 @@ import { NotificationPromptComponent } from '../notification-prompt/notification
               (ngModelChange)="store.setBaseCurrency($event)"
               optionLabel="label"
               optionValue="value"
-              class="w-28"
+              class="w-20 sm:w-28"
               size="small"
             />
           </div>
         </div>
       </header>
 
-      <main class="mx-auto max-w-7xl px-4 py-6 sm:px-6">
+      <app-notification-prompt />
+
+      <main class="mx-auto max-w-7xl px-safe px-4 py-4 pb-safe sm:px-6 sm:py-6">
         <router-outlet />
       </main>
     </div>

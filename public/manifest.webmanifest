@@ -4,9 +4,10 @@
   "description": "ติดตาม subscription และแจ้งเตือนก่อนตัดบัตร",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#f8fafc",
+  "display_override": ["standalone", "minimal-ui"],
+  "background_color": "#ffffff",
   "theme_color": "#4f46e5",
-  "orientation": "portrait",
+  "orientation": "portrait-primary",
   "icons": [
     {
       "src": "icons/icon.svg",

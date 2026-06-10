@@ -12,8 +12,8 @@ import { SupabaseAuthService } from '../../core/services/supabase-auth.service';
   selector: 'app-login',
   imports: [ReactiveFormsModule, Button, InputText, Password, Message],
   template: `
-    <div class="flex min-h-screen items-center justify-center bg-slate-50 px-4">
-      <div class="w-full max-w-md rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
+    <div class="flex min-h-dvh-safe items-center justify-center bg-slate-50 px-4 px-safe pt-safe pb-safe">
+      <div class="w-full max-w-md rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
         <div class="mb-6 text-center">
           <div
             class="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-indigo-600 text-white"

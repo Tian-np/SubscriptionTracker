@@ -1,0 +1,7 @@
+/** แปลง Date เป็น YYYY-MM-DD ตาม timezone ท้องถิ่น (ไม่ใช้ toISOString ที่อาจเลื่อนวัน) */
+export function toLocalDateString(date: Date): string {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, '0');
+  const d = String(date.getDate()).padStart(2, '0');
+  return `${y}-${m}-${d}`;
+}

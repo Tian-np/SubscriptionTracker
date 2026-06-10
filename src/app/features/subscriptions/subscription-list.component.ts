@@ -165,16 +165,19 @@ import { SubscriptionFormComponent } from './subscription-form.component';
     <p-dialog
       [header]="editingSubscription() ? 'แก้ไข Subscription' : 'เพิ่ม Subscription'"
       [visible]="dialogVisible()"
-      (visibleChange)="dialogVisible.set($event)"
+      (visibleChange)="onDialogVisibleChange($event)"
       [modal]="true"
       [style]="{ width: '600px' }"
       [breakpoints]="{ '640px': '95vw' }"
     >
-      <app-subscription-form
-        [subscription]="editingSubscription()"
-        (saved)="onFormSaved()"
-        (cancelled)="dialogVisible.set(false)"
-      />
+      @if (dialogVisible()) {
+        <app-subscription-form
+          [formKey]="formKey()"
+          [subscription]="editingSubscription()"
+          (saved)="onFormSaved()"
+          (cancelled)="closeDialog()"
+        />
+      }
     </p-dialog>
   `,
 })
@@ -185,6 +188,7 @@ export class SubscriptionListComponent implements OnInit {
 
   readonly dialogVisible = signal(false);
   readonly editingSubscription = signal<Subscription | null>(null);
+  readonly formKey = signal(0);
 
   ngOnInit(): void {
     if (this.store.subscriptions().length === 0) {
@@ -206,16 +210,30 @@ export class SubscriptionListComponent implements OnInit {
   }
 
   openAddDialog(): void {
+    this.store.error.set(null);
     this.editingSubscription.set(null);
+    this.formKey.update((k) => k + 1);
     this.dialogVisible.set(true);
   }
 
   openEditDialog(sub: Subscription): void {
+    this.store.error.set(null);
     this.editingSubscription.set(sub);
+    this.formKey.update((k) => k + 1);
     this.dialogVisible.set(true);
   }
 
   onFormSaved(): void {
+    this.closeDialog();
+  }
+
+  onDialogVisibleChange(visible: boolean): void {
+    if (!visible) {
+      this.closeDialog();
+    }
+  }
+
+  closeDialog(): void {
     this.dialogVisible.set(false);
     this.editingSubscription.set(null);
   }

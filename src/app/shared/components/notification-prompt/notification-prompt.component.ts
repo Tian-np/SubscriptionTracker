@@ -9,7 +9,7 @@ import { PushNotificationService } from '../../../core/services/push-notificatio
   imports: [Button, Message],
   template: `
     @if (showBanner()) {
-      <div class="border-b border-indigo-100 bg-indigo-50 px-4 py-3">
+      <div class="border-b border-indigo-100 bg-indigo-50 px-safe px-4 py-3">
         <div class="mx-auto flex max-w-7xl flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div class="flex items-start gap-3">
             <i class="pi pi-bell mt-0.5 text-indigo-600"></i>
