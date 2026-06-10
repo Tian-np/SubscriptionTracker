@@ -13,18 +13,18 @@ import { Router, RouterLink, RouterLinkActive } from '@angular/router';
           routerLink="/"
           routerLinkActive="text-accent"
           [routerLinkActiveOptions]="{ exact: true }"
-          class="touch-target flex flex-1 flex-col items-center justify-center gap-0.5 py-1.5 text-[11px] font-medium text-slate-500 transition active:scale-95"
+          class="touch-target flex flex-1 flex-col items-center justify-center gap-0.5 py-1.5 text-[11px] font-medium text-slate-500 transition active:scale-95 [&.text-accent]:text-accent"
         >
-          <i class="pi pi-home text-xl"></i>
+          <i class="pi pi-home text-[1.35rem]"></i>
           <span>หน้าหลัก</span>
         </a>
 
         <a
           routerLink="/subscriptions"
           routerLinkActive="text-accent"
-          class="touch-target flex flex-1 flex-col items-center justify-center gap-0.5 py-1.5 text-[11px] font-medium text-slate-500 transition active:scale-95"
+          class="touch-target flex flex-1 flex-col items-center justify-center gap-0.5 py-1.5 text-[11px] font-medium text-slate-500 transition active:scale-95 [&.text-accent]:text-accent"
         >
-          <i class="pi pi-list text-xl"></i>
+          <i class="pi pi-list text-[1.35rem]"></i>
           <span>รายการ</span>
         </a>
 
@@ -34,7 +34,7 @@ import { Router, RouterLink, RouterLinkActive } from '@angular/router';
           (click)="openAdd()"
         >
           <span
-            class="flex h-9 w-9 items-center justify-center rounded-full bg-accent text-white shadow-lg shadow-accent/30"
+            class="pixel-fab flex h-9 w-9 items-center justify-center rounded-lg border-2 border-accent/40 bg-accent text-white"
           >
             <i class="pi pi-plus text-sm"></i>
           </span>

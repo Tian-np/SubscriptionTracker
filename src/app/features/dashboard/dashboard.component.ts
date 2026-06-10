@@ -7,16 +7,27 @@ import { NotificationService } from '../../core/services/notification.service';
 import { SubscriptionStore } from '../../core/stores/subscription.store';
 import { formatCurrency } from '../../core/utils/currency.util';
 import { CurrencyFormatPipe } from '../../shared/pipes/currency-format.pipe';
+import { PixelBuddyComponent } from '../../shared/components/pixel-buddy/pixel-buddy.component';
+import { PixelLoaderComponent } from '../../shared/components/pixel-loader/pixel-loader.component';
 
 @Component({
   selector: 'app-dashboard',
-  imports: [RouterLink, Button, Tag, CurrencyFormatPipe],
+  imports: [RouterLink, Button, Tag, CurrencyFormatPipe, PixelBuddyComponent, PixelLoaderComponent],
   template: `
     <div class="space-y-4 sm:space-y-6">
-      <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h2 class="text-xl font-bold text-slate-100 sm:text-2xl">Dashboard</h2>
-          <p class="text-xs text-slate-500 sm:text-sm">ภาพรวม subscription ของคุณในเดือนนี้</p>
+      <div
+        class="pixel-frame flex flex-col gap-4 rounded-xl bg-card/60 p-4 sm:flex-row sm:items-center sm:justify-between sm:p-5"
+      >
+        <div class="flex items-center gap-3 sm:gap-4">
+          <app-pixel-buddy
+            [mood]="store.loading() ? 'happy' : store.billingReminders().length > 0 ? 'excited' : 'happy'"
+            [size]="52"
+            [speech]="greeting()"
+          />
+          <div>
+            <h2 class="text-xl font-bold text-slate-100 sm:text-2xl">Dashboard</h2>
+            <p class="text-xs text-slate-500 sm:text-sm">ภาพรวม subscription ของคุณในเดือนนี้ ✨</p>
+          </div>
         </div>
         <p-button
           label="เพิ่ม Subscription"
@@ -30,13 +41,13 @@ import { CurrencyFormatPipe } from '../../shared/pipes/currency-format.pipe';
 
       @if (store.loading()) {
         <div class="flex items-center justify-center py-20">
-          <i class="pi pi-spin pi-spinner text-3xl text-accent"></i>
+          <app-pixel-loader label="กำลังโหลดข้อมูล..." />
         </div>
       } @else {
         <div class="grid grid-cols-2 gap-3 lg:grid-cols-4 lg:gap-4">
-          <div class="rounded-xl border border-midnight-700 bg-card p-3 sm:rounded-2xl sm:p-5">
+          <div class="pixel-card rounded-xl border border-midnight-700 bg-card p-3 sm:rounded-2xl sm:p-5">
             <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-3">
-              <div class="rounded-lg bg-accent/15 p-2 sm:rounded-xl sm:p-3">
+              <div class="rounded-lg border border-accent/15 bg-accent/10 p-2 sm:rounded-xl sm:p-3">
                 <i class="pi pi-wallet text-accent text-sm sm:text-base"></i>
               </div>
               <div class="min-w-0">
@@ -48,10 +59,10 @@ import { CurrencyFormatPipe } from '../../shared/pipes/currency-format.pipe';
             </div>
           </div>
 
-          <div class="rounded-xl border border-midnight-700 bg-card p-3 sm:rounded-2xl sm:p-5">
+          <div class="pixel-card rounded-xl border border-midnight-700 bg-card p-3 sm:rounded-2xl sm:p-5">
             <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-3">
-              <div class="rounded-lg bg-emerald-500/15 p-2 sm:rounded-xl sm:p-3">
-                <i class="pi pi-check-circle text-emerald-400 text-sm sm:text-base"></i>
+              <div class="rounded-lg border border-emerald-500/15 bg-emerald-500/10 p-2 sm:rounded-xl sm:p-3">
+                <i class="pi pi-check-circle text-emerald-400/90 text-sm sm:text-base"></i>
               </div>
               <div>
                 <p class="text-[10px] font-medium uppercase tracking-wide text-slate-500 sm:text-xs">ใช้งานอยู่</p>
@@ -62,10 +73,10 @@ import { CurrencyFormatPipe } from '../../shared/pipes/currency-format.pipe';
             </div>
           </div>
 
-          <div class="rounded-xl border border-midnight-700 bg-card p-3 sm:rounded-2xl sm:p-5">
+          <div class="pixel-card rounded-xl border border-midnight-700 bg-card p-3 sm:rounded-2xl sm:p-5">
             <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-3">
-              <div class="rounded-lg bg-amber-500/15 p-2 sm:rounded-xl sm:p-3">
-                <i class="pi pi-bell text-amber-400 text-sm sm:text-base"></i>
+              <div class="rounded-lg border border-amber-500/15 bg-amber-500/10 p-2 sm:rounded-xl sm:p-3">
+                <i class="pi pi-bell text-amber-400/90 text-sm sm:text-base"></i>
               </div>
               <div>
                 <p class="text-[10px] font-medium uppercase tracking-wide text-slate-500 sm:text-xs">ใกล้ตัดบัตร</p>
@@ -76,10 +87,10 @@ import { CurrencyFormatPipe } from '../../shared/pipes/currency-format.pipe';
             </div>
           </div>
 
-          <div class="rounded-xl border border-midnight-700 bg-card p-3 sm:rounded-2xl sm:p-5">
+          <div class="pixel-card rounded-xl border border-midnight-700 bg-card p-3 sm:rounded-2xl sm:p-5">
             <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-3">
-              <div class="rounded-lg bg-rose-500/15 p-2 sm:rounded-xl sm:p-3">
-                <i class="pi pi-times-circle text-rose-400 text-sm sm:text-base"></i>
+              <div class="rounded-lg border border-rose-500/15 bg-rose-500/10 p-2 sm:rounded-xl sm:p-3">
+                <i class="pi pi-times-circle text-rose-400/90 text-sm sm:text-base"></i>
               </div>
               <div>
                 <p class="text-[10px] font-medium uppercase tracking-wide text-slate-500 sm:text-xs">ไม่ได้ใช้แล้ว</p>
@@ -226,6 +237,13 @@ export class DashboardComponent implements OnInit {
       this.store.loadAll();
     }
     setTimeout(() => this.notificationService.checkBillingReminders(), 1000);
+  }
+
+  greeting(): string {
+    const hour = new Date().getHours();
+    if (hour < 12) return 'สวัสดีตอนเช้า! ☀️';
+    if (hour < 18) return 'สวัสดีตอนบ่าย! ✨';
+    return 'สวัสดีตอนเย็น! 🌙';
   }
 
   formatDate(dateStr: string): string {

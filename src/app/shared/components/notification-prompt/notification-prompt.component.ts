@@ -11,10 +11,14 @@ import { PushNotificationService } from '../../../core/services/push-notificatio
     @if (showBanner()) {
       <div class="border-b border-accent/20 bg-accent/10 px-safe px-3 py-2.5 sm:px-4 sm:py-3">
         <div
-          class="mx-auto flex max-w-7xl flex-col gap-2.5 sm:flex-row sm:items-center sm:justify-between sm:gap-3 px-4!"
+          class="mx-auto flex max-w-7xl flex-col gap-2.5 sm:flex-row sm:items-center sm:justify-between sm:gap-3 px-4! relative"
         >
           <div class="flex items-start gap-3">
-            <i class="pi pi-bell mt-0.5 text-accent"></i>
+            <span
+              class="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-accent/20 bg-accent/10"
+            >
+              <i class="pi pi-bell text-sm text-accent"></i>
+            </span>
             <div>
               <p class="text-sm font-medium text-slate-200">เปิดการแจ้งเตือนบน iPhone</p>
               @if (push.needsHomeScreen()) {
@@ -47,6 +51,7 @@ import { PushNotificationService } from '../../../core/services/push-notificatio
               />
             }
             <p-button
+              class="absolute right-1 top-[-8px]"
               icon="pi pi-times"
               severity="secondary"
               [text]="true"

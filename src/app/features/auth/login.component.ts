@@ -7,19 +7,23 @@ import { Message } from 'primeng/message';
 import { Password } from 'primeng/password';
 
 import { SupabaseAuthService } from '../../core/services/supabase-auth.service';
+import { PixelBgComponent } from '../../shared/components/pixel-bg/pixel-bg.component';
+import { PixelBuddyComponent } from '../../shared/components/pixel-buddy/pixel-buddy.component';
 
 @Component({
   selector: 'app-login',
-  imports: [ReactiveFormsModule, Button, InputText, Password, Message],
+  imports: [ReactiveFormsModule, Button, InputText, Password, Message, PixelBgComponent, PixelBuddyComponent],
   template: `
-    <div class="flex min-h-dvh-safe items-center justify-center bg-app px-4 px-safe pt-safe pb-safe">
-      <div class="w-full max-w-md rounded-2xl border border-midnight-700 bg-card p-5 sm:p-8">
+    <app-pixel-bg />
+    <div class="relative z-10 flex min-h-dvh-safe items-center justify-center bg-app px-4 px-safe pt-safe pb-safe">
+      <div class="pixel-frame w-full max-w-md rounded-2xl border border-midnight-700 bg-card/90 p-5 sm:p-8">
         <div class="mb-6 text-center">
-          <div
-            class="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-accent text-white"
-          >
-            <i class="pi pi-wallet"></i>
-          </div>
+          <app-pixel-buddy
+            [mood]="isSignUp ? 'excited' : 'wave'"
+            [size]="80"
+            [speech]="isSignUp ? 'มาเริ่มต้นกันเลย!' : 'ยินดีต้อนรับกลับ!'"
+            class="mb-2"
+          />
           <h1 class="text-2xl font-bold text-slate-100">SubTracker</h1>
           <p class="mt-1 text-sm text-slate-500">{{ isSignUp ? 'สมัครสมาชิก' : 'เข้าสู่ระบบ' }}</p>
         </div>

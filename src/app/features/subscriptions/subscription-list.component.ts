@@ -15,6 +15,8 @@ import { Subscription } from '../../core/models/subscription.model';
 import { SubscriptionStore } from '../../core/stores/subscription.store';
 import { daysUntil } from '../../core/utils/currency.util';
 import { CurrencyFormatPipe } from '../../shared/pipes/currency-format.pipe';
+import { PixelBuddyComponent } from '../../shared/components/pixel-buddy/pixel-buddy.component';
+import { PixelLoaderComponent } from '../../shared/components/pixel-loader/pixel-loader.component';
 import { SubscriptionFormComponent } from './subscription-form.component';
 
 @Component({
@@ -30,6 +32,8 @@ import { SubscriptionFormComponent } from './subscription-form.component';
     Select,
     Tag,
     CurrencyFormatPipe,
+    PixelBuddyComponent,
+    PixelLoaderComponent,
     SubscriptionFormComponent,
   ],
   providers: [ConfirmationService],
@@ -54,7 +58,7 @@ import { SubscriptionFormComponent } from './subscription-form.component';
       <!-- Filters -->
       <div class="flex flex-col gap-3 sm:flex-row">
         <p-iconfield class="flex-1">
-          <p-inputicon class="pi pi-search" />
+          <p-inputicon class="pi pi-search icon-muted" />
           <input
             pInputText
             placeholder="ค้นหา..."
@@ -77,12 +81,17 @@ import { SubscriptionFormComponent } from './subscription-form.component';
 
       @if (store.loading() && store.subscriptions().length === 0) {
         <div class="flex items-center justify-center py-20">
-          <i class="pi pi-spin pi-spinner text-3xl text-accent"></i>
+          <app-pixel-loader label="กำลังดึงรายการ..." />
         </div>
       } @else if (store.filteredSubscriptions().length === 0) {
-        <div class="rounded-2xl border border-dashed border-midnight-600 bg-card py-16 text-center">
-          <i class="pi pi-inbox mb-3 text-4xl text-midnight-600"></i>
-          <p class="text-slate-500">ไม่พบ subscription</p>
+        <div class="pixel-frame rounded-2xl border border-dashed border-midnight-600 bg-card py-12 text-center">
+          <app-pixel-buddy
+            mood="sad"
+            [size]="72"
+            speech="ยังไม่มีรายการเลยน้า..."
+            class="mb-4"
+          />
+          <p class="text-slate-500">เริ่มเพิ่ม subscription แรกของคุณกันเถอะ!</p>
           <p-button
             label="เพิ่มรายการแรก"
             icon="pi pi-plus"
@@ -94,7 +103,7 @@ import { SubscriptionFormComponent } from './subscription-form.component';
         <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3">
           @for (sub of store.filteredSubscriptions(); track sub.id) {
             <div
-              class="group rounded-xl border bg-card p-4 transition sm:rounded-2xl sm:p-5 hover:border-midnight-600 hover:bg-midnight-800/40"
+              class="pixel-card group rounded-xl border bg-card p-4 sm:rounded-2xl sm:p-5 hover:border-midnight-600 hover:bg-midnight-800/40"
               [class.border-midnight-700]="sub.status === 'active'"
               [class.border-rose-900/60]="sub.status === 'cancelled'"
               [class.opacity-60]="sub.status !== 'active'"
@@ -103,10 +112,10 @@ import { SubscriptionFormComponent } from './subscription-form.component';
                 <div class="flex items-center gap-3">
                   @if (store.getCategoryById(sub.categoryId); as cat) {
                     <div
-                      class="flex h-10 w-10 items-center justify-center rounded-xl text-white"
-                      [style.background-color]="cat.color"
+                      class="flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 text-white shadow-sm"
+                      [style.background-color]="cat.color + 'cc'"
                     >
-                      <i [class]="cat.icon"></i>
+                      <i [class]="cat.icon + ' text-sm'"></i>
                     </div>
                   }
                   <div>
@@ -126,10 +135,14 @@ import { SubscriptionFormComponent } from './subscription-form.component';
               <div class="mb-3 space-y-1.5 sm:mb-4">
                 <p class="text-xl font-bold text-slate-100 sm:text-2xl">
                   {{ sub.amount | currencyFormat: sub.currency }}
-                  <span class="text-xs font-normal text-slate-500 sm:text-sm">/{{ cycleLabel(sub.billingCycle) }}</span>
+                  <span class="text-xs font-normal text-slate-500 sm:text-sm"
+                    >/{{ cycleLabel(sub.billingCycle) }}</span
+                  >
                 </p>
                 @if (sub.status === 'active') {
-                  <div class="flex flex-wrap items-center gap-1.5 text-xs text-slate-500 sm:text-sm">
+                  <div
+                    class="flex flex-wrap items-center gap-1.5 text-xs text-slate-500 sm:text-sm"
+                  >
                     <span>ตัดบัตร: {{ formatDate(sub.nextBillingDate) }}</span>
                     <p-tag
                       [value]="daysLabel(daysUntil(sub.nextBillingDate))"
@@ -139,7 +152,13 @@ import { SubscriptionFormComponent } from './subscription-form.component';
                   </div>
                 }
                 @if (sub.isShared) {
-                  <p-tag value="Shared" icon="pi pi-users" severity="info" [rounded]="true" class="text-xs" />
+                  <p-tag
+                    value="Shared"
+                    icon="pi pi-users"
+                    severity="info"
+                    [rounded]="true"
+                    class="text-xs"
+                  />
                 }
               </div>
 
@@ -294,7 +313,9 @@ export class SubscriptionListComponent implements OnInit {
     return labels[status] ?? status;
   }
 
-  statusSeverity(status: string): 'success' | 'info' | 'warn' | 'danger' | 'secondary' | 'contrast' {
+  statusSeverity(
+    status: string,
+  ): 'success' | 'info' | 'warn' | 'danger' | 'secondary' | 'contrast' {
     const map: Record<string, 'success' | 'warn' | 'danger'> = {
       active: 'success',
       paused: 'warn',

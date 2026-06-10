@@ -56,7 +56,7 @@ const SubTrackerPreset = definePreset(Aura, {
         },
         primary: {
           color: '#6b94ff',
-          contrastColor: '#060b14',
+          contrastColor: '#f8fafc',
           hoverColor: '#8eb0ff',
           activeColor: '#4d7cff',
         },

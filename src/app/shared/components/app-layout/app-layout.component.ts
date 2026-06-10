@@ -1,11 +1,8 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { FormsModule } from '@angular/forms';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { Button } from 'primeng/button';
-import { Select } from 'primeng/select';
 import { Toast } from 'primeng/toast';
 
-import { SUPPORTED_CURRENCIES } from '../../../core/models/currency.model';
 import { environment } from '../../../../environments/environment';
 import { NotificationService } from '../../../core/services/notification.service';
 import { PushNotificationService } from '../../../core/services/push-notification.service';
@@ -13,6 +10,8 @@ import { SupabaseAuthService } from '../../../core/services/supabase-auth.servic
 import { SubscriptionStore } from '../../../core/stores/subscription.store';
 import { MobileBottomNavComponent } from '../mobile-bottom-nav/mobile-bottom-nav.component';
 import { NotificationPromptComponent } from '../notification-prompt/notification-prompt.component';
+import { PixelBgComponent } from '../pixel-bg/pixel-bg.component';
+import { PixelBuddyComponent } from '../pixel-buddy/pixel-buddy.component';
 
 @Component({
   selector: 'app-layout',
@@ -20,31 +19,32 @@ import { NotificationPromptComponent } from '../notification-prompt/notification
     RouterOutlet,
     RouterLink,
     RouterLinkActive,
-    FormsModule,
     Button,
-    Select,
     Toast,
     NotificationPromptComponent,
     MobileBottomNavComponent,
+    PixelBgComponent,
+    PixelBuddyComponent,
   ],
   template: `
     <p-toast position="top-right" />
+    <app-pixel-bg />
 
-    <div class="flex min-h-dvh-safe flex-col bg-app">
+    <div class="relative z-10 flex min-h-dvh-safe flex-col bg-app">
       <!-- Header -->
       <header
         class="sticky top-0 z-40 shrink-0 border-b border-midnight-700 bg-midnight-900/95 pt-safe backdrop-blur-md"
       >
         <div class="mx-auto flex max-w-7xl items-center justify-between gap-2 px-safe p-4!">
           <div class="flex min-w-0 items-center gap-2">
-            <div
-              class="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-accent text-white sm:h-9 sm:w-9"
-            >
-              <i class="pi pi-wallet text-sm"></i>
-            </div>
+            <app-pixel-buddy mood="happy" [size]="36" class="hidden sm:block" />
+            <app-pixel-buddy mood="happy" [size]="28" class="sm:hidden" />
             <div class="min-w-0 leading-tight">
-              <h1 class="truncate text-sm font-semibold text-slate-100 sm:text-lg">SubTracker</h1>
-              <p class="hidden text-xs text-slate-500 sm:block">จัดการ subscription ของคุณ</p>
+              <div class="flex items-center gap-2">
+                <h1 class="truncate text-sm font-semibold text-slate-100 sm:text-lg">SubTracker</h1>
+                <span class="pixel-badge hidden sm:inline">8-bit</span>
+              </div>
+              <p class="hidden text-xs text-slate-500 sm:block">จัดการ subscription ของคุณ ✦</p>
             </div>
           </div>
 
@@ -52,18 +52,18 @@ import { NotificationPromptComponent } from '../notification-prompt/notification
           <nav class="hidden items-center gap-1 md:flex">
             <a
               routerLink="/"
-              routerLinkActive="bg-midnight-700 text-accent"
+              routerLinkActive="bg-accent/10 text-accent"
               [routerLinkActiveOptions]="{ exact: true }"
-              class="rounded-lg px-3 py-2 text-sm font-medium text-slate-400 transition hover:bg-midnight-800 hover:text-slate-200"
+              class="rounded-lg px-3 py-2 text-sm font-medium text-slate-500 transition hover:bg-midnight-800/80 hover:text-slate-200"
             >
-              <i class="pi pi-home mr-1.5"></i>Dashboard
+              <i class="pi pi-home mr-1.5 text-[0.8rem]"></i>Dashboard
             </a>
             <a
               routerLink="/subscriptions"
-              routerLinkActive="bg-midnight-700 text-accent"
-              class="rounded-lg px-3 py-2 text-sm font-medium text-slate-400 transition hover:bg-midnight-800 hover:text-slate-200"
+              routerLinkActive="bg-accent/10 text-accent"
+              class="rounded-lg px-3 py-2 text-sm font-medium text-slate-500 transition hover:bg-midnight-800/80 hover:text-slate-200"
             >
-              <i class="pi pi-list mr-1.5"></i>Subscriptions
+              <i class="pi pi-list mr-1.5 text-[0.8rem]"></i>Subscriptions
             </a>
           </nav>
 
@@ -98,10 +98,17 @@ import { NotificationPromptComponent } from '../notification-prompt/notification
       <main
         class="mx-auto w-full max-w-7xl flex-1 px-safe p-6! pb-nav-safe sm:px-6 sm:py-6 md:pb-safe"
       >
-        <router-outlet />
+        <div class="page-enter">
+          <router-outlet />
+        </div>
       </main>
 
       <app-mobile-bottom-nav />
+
+      <!-- Desktop floating buddy -->
+      <div class="pointer-events-none fixed right-4 bottom-20 z-20 hidden lg:block">
+        <app-pixel-buddy mood="wave" [size]="72" speech="ยินดีต้อนรับกลับมา!" />
+      </div>
     </div>
   `,
 })
@@ -112,7 +119,6 @@ export class AppLayoutComponent implements OnInit {
   private readonly notificationService = inject(NotificationService);
 
   readonly useSupabase = environment.useSupabase;
-  readonly currencies = SUPPORTED_CURRENCIES.map((c) => ({ label: c, value: c }));
 
   ngOnInit(): void {
     this.notificationService.init();

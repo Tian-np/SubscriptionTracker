@@ -208,7 +208,7 @@ import { toLocalDateString } from '../../core/utils/date.util';
           label="ยกเลิก"
           severity="secondary"
           [text]="true"
-          styleClass="w-full text-slate-300! sm:w-auto"
+          styleClass="w-full sm:w-auto"
           (onClick)="cancelled.emit()"
         />
         <p-button
