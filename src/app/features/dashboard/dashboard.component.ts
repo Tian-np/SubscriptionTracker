@@ -19,13 +19,7 @@ import { PixelLoaderComponent } from '../../shared/components/pixel-loader/pixel
         class="pixel-frame flex flex-col gap-4 rounded-xl bg-card/60 p-4 sm:flex-row sm:items-center sm:justify-between sm:p-5"
       >
         <div class="flex items-center gap-3 sm:gap-4">
-          <app-pixel-buddy
-            [mood]="
-              store.loading() ? 'happy' : store.billingReminders().length > 0 ? 'excited' : 'happy'
-            "
-            [size]="52"
-            [speech]="greeting()"
-          />
+          <app-pixel-buddy sync [size]="52" />
           <div>
             <h2 class="text-xl font-bold text-slate-100 sm:text-2xl">Dashboard</h2>
             <p class="text-xs text-slate-500 sm:text-sm">ภาพรวม subscription ของคุณในเดือนนี้ ✨</p>
@@ -285,13 +279,6 @@ export class DashboardComponent implements OnInit {
       this.store.loadAll();
     }
     setTimeout(() => this.notificationService.checkBillingReminders(), 1000);
-  }
-
-  greeting(): string {
-    const hour = new Date().getHours();
-    if (hour < 12) return 'สวัสดีตอนเช้า! ☀️';
-    if (hour < 18) return 'สวัสดีตอนบ่าย! ✨';
-    return 'สวัสดีตอนเย็น! 🌙';
   }
 
   formatDate(dateStr: string): string {

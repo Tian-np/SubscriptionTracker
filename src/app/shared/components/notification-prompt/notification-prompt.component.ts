@@ -2,6 +2,7 @@ import { Component, inject } from '@angular/core';
 import { Button } from 'primeng/button';
 import { Message } from 'primeng/message';
 
+import { SubbyService } from '../../../core/services/subby.service';
 import { PushNotificationService } from '../../../core/services/push-notification.service';
 
 @Component({
@@ -74,6 +75,7 @@ import { PushNotificationService } from '../../../core/services/push-notificatio
 })
 export class NotificationPromptComponent {
   readonly push = inject(PushNotificationService);
+  private readonly subby = inject(SubbyService);
 
   private dismissed = false;
 
@@ -88,6 +90,7 @@ export class NotificationPromptComponent {
     const ok = await this.push.enable();
     if (ok) {
       this.dismissed = true;
+      this.subby.react('notify_on');
     }
   }
 

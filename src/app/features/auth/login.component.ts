@@ -6,6 +6,7 @@ import { InputText } from 'primeng/inputtext';
 import { Message } from 'primeng/message';
 import { Password } from 'primeng/password';
 
+import { SubbyService } from '../../core/services/subby.service';
 import { SupabaseAuthService } from '../../core/services/supabase-auth.service';
 import { PixelBgComponent } from '../../shared/components/pixel-bg/pixel-bg.component';
 import { PixelBuddyComponent } from '../../shared/components/pixel-buddy/pixel-buddy.component';
@@ -85,6 +86,7 @@ export class LoginComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly router = inject(Router);
   readonly auth = inject(SupabaseAuthService);
+  private readonly subby = inject(SubbyService);
 
   isSignUp = false;
   loading = false;
@@ -106,6 +108,7 @@ export class LoginComponent implements OnInit {
   toggleMode(): void {
     this.isSignUp = !this.isSignUp;
     this.auth.authError.set(null);
+    this.subby.react(this.isSignUp ? 'created' : 'welcome');
   }
 
   submit(): void {
@@ -120,10 +123,15 @@ export class LoginComponent implements OnInit {
     op.subscribe({
       next: () => {
         this.loading = false;
+        this.subby.react(
+          this.isSignUp ? 'created' : 'welcome',
+          this.isSignUp ? 'ยินดีต้อนรับสมาชิกใหม่! 🎉' : 'ยินดีต้อนรับกลับมา! ✨',
+        );
         this.router.navigate(['/']);
       },
       error: () => {
         this.loading = false;
+        this.subby.reactError(this.auth.authError() ?? 'เข้าสู่ระบบไม่สำเร็จ');
       },
     });
   }

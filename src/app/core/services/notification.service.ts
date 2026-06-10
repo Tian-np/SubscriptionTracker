@@ -1,6 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { MessageService } from 'primeng/api';
 
+import { SubbyService } from './subby.service';
 import { SubscriptionStore } from '../stores/subscription.store';
 import { formatCurrency } from '../utils/currency.util';
 import { PushNotificationService } from './push-notification.service';
@@ -10,6 +11,7 @@ export class NotificationService {
   private readonly messageService = inject(MessageService);
   private readonly pushService = inject(PushNotificationService);
   private readonly store = inject(SubscriptionStore);
+  private readonly subby = inject(SubbyService);
 
   private readonly shownTags = new Set<string>();
 
@@ -27,10 +29,12 @@ export class NotificationService {
     const reminders = this.store.billingReminders();
     const base = this.store.baseCurrency();
 
+    let subbyNotified = false;
+
     for (const item of reminders) {
       const { subscription, daysUntil, amountInBaseCurrency } = item;
       const amount = formatCurrency(amountInBaseCurrency, base);
-      const dayLabel = daysUntil === 0 ? 'วันนี้' : `อีก ${daysUntil} วัน`;
+      const dayLabel = daysUntil === 0 ? 'วันนี้' : daysUntil === 1 ? 'พรุ่งนี้' : `อีก ${daysUntil} วัน`;
       const tag = `billing-${subscription.id}-${subscription.nextBillingDate}`;
 
       if (this.shownTags.has(tag)) continue;
@@ -38,6 +42,11 @@ export class NotificationService {
 
       const title = `แจ้งเตือน: ${subscription.name}`;
       const detail = `ตัดบัตร${dayLabel} — ${amount}`;
+
+      if (!subbyNotified) {
+        this.subby.react('billing_alert', `${subscription.name} ตัดบัตร${dayLabel}! 💳`);
+        subbyNotified = true;
+      }
 
       this.messageService.add({
         severity: daysUntil <= 1 ? 'warn' : 'info',

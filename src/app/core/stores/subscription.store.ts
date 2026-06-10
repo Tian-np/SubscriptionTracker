@@ -11,6 +11,7 @@ import {
 } from '../models/subscription.model';
 import { CategoryApiService } from '../services/category-api.service';
 import { CurrencyApiService } from '../services/currency-api.service';
+import { SubbyService } from '../services/subby.service';
 import { SubscriptionApiService } from '../services/subscription-api.service';
 import { SupabaseSubscriptionService } from '../services/supabase-subscription.service';
 import { convertCurrency, daysUntil, toMonthlyAmount } from '../utils/currency.util';
@@ -21,6 +22,7 @@ export class SubscriptionStore {
   private readonly categoryApi = inject(CategoryApiService);
   private readonly currencyApi = inject(CurrencyApiService);
   private readonly supabaseData = inject(SupabaseSubscriptionService);
+  private readonly subby = inject(SubbyService);
 
   readonly subscriptions = signal<Subscription[]>([]);
   readonly categories = signal<Category[]>([]);
@@ -123,6 +125,7 @@ export class SubscriptionStore {
   loadAll(): void {
     this.loading.set(true);
     this.error.set(null);
+    this.subby.onLoadStart();
 
     const settings$ = environment.useSupabase
       ? this.supabaseData.getBaseCurrency().pipe(catchError(() => of(environment.defaultCurrency)))
@@ -143,10 +146,12 @@ export class SubscriptionStore {
             this.exchangeRates.set(rates);
           }
           this.loading.set(false);
+          this.subby.onLoadDone();
         }),
         catchError((err: Error) => {
           this.error.set(err.message ?? 'Failed to load data');
           this.loading.set(false);
+          this.subby.reactError(err.message ?? 'โหลดข้อมูลไม่สำเร็จ');
           return of(null);
         }),
       )
@@ -160,10 +165,12 @@ export class SubscriptionStore {
       tap((created) => {
         this.subscriptions.update((list) => [...list, created]);
         this.loading.set(false);
+        this.subby.react('created', `เพิ่ม ${created.name} สำเร็จ! 🎉`);
       }),
       catchError((err: Error) => {
         this.error.set(err.message ?? 'ไม่สามารถเพิ่ม subscription ได้');
         this.loading.set(false);
+        this.subby.reactError(err.message);
         return of(null);
       }),
     );
@@ -176,24 +183,30 @@ export class SubscriptionStore {
       tap((updated) => {
         this.subscriptions.update((list) => list.map((s) => (s.id === id ? updated : s)));
         this.loading.set(false);
+        this.subby.react('updated', `อัปเดต ${updated.name} แล้ว ✓`);
       }),
       catchError((err: Error) => {
         this.error.set(err.message ?? 'ไม่สามารถอัปเดต subscription ได้');
         this.loading.set(false);
+        this.subby.reactError(err.message);
         return of(null);
       }),
     );
   }
 
   delete(id: string): void {
+    const removed = this.subscriptions().find((s) => s.id === id);
+
     this.subscriptionApi
       .delete(id)
       .pipe(
         tap(() => {
           this.subscriptions.update((list) => list.filter((s) => s.id !== id));
+          this.subby.react('deleted', removed ? `ลบ ${removed.name} แล้ว~` : undefined);
         }),
         catchError((err: Error) => {
           this.error.set(err.message);
+          this.subby.reactError(err.message);
           return of(null);
         }),
       )

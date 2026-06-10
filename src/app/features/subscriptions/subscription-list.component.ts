@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, effect, inject, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { ConfirmationService } from 'primeng/api';
@@ -12,6 +12,7 @@ import { Select } from 'primeng/select';
 import { Tag } from 'primeng/tag';
 
 import { Subscription } from '../../core/models/subscription.model';
+import { SubbyService } from '../../core/services/subby.service';
 import { SubscriptionStore } from '../../core/stores/subscription.store';
 import { daysUntil } from '../../core/utils/currency.util';
 import { CurrencyFormatPipe } from '../../shared/pipes/currency-format.pipe';
@@ -84,13 +85,10 @@ import { SubscriptionFormComponent } from './subscription-form.component';
           <app-pixel-loader label="กำลังดึงรายการ..." />
         </div>
       } @else if (store.filteredSubscriptions().length === 0) {
-        <div class="pixel-frame rounded-2xl border border-dashed border-midnight-600 bg-card py-12 text-center">
-          <app-pixel-buddy
-            mood="sad"
-            [size]="72"
-            speech="ยังไม่มีรายการเลยน้า..."
-            class="mb-4"
-          />
+        <div
+          class="pixel-frame rounded-2xl border border-dashed border-midnight-600 bg-card py-12 text-center"
+        >
+          <app-pixel-buddy sync [size]="72" class="mb-4" />
           <p class="text-slate-500">เริ่มเพิ่ม subscription แรกของคุณกันเถอะ!</p>
           <p-button
             label="เพิ่มรายการแรก"
@@ -218,10 +216,38 @@ export class SubscriptionListComponent implements OnInit {
   readonly store = inject(SubscriptionStore);
   private readonly route = inject(ActivatedRoute);
   private readonly confirmationService = inject(ConfirmationService);
+  private readonly subby = inject(SubbyService);
 
   readonly dialogVisible = signal(false);
   readonly editingSubscription = signal<Subscription | null>(null);
   readonly formKey = signal(0);
+
+  constructor() {
+    effect(() => {
+      if (this.store.loading()) return;
+
+      const total = this.store.subscriptions().length;
+      const filtered = this.store.filteredSubscriptions().length;
+      const query = this.store.searchQuery().trim();
+      const category = this.store.selectedCategoryId();
+
+      if (total === 0) {
+        this.subby.react('empty');
+        return;
+      }
+
+      if (filtered === 0) {
+        if (query) {
+          this.subby.react('not_found', `หา "${query}" ไม่เจอเลย`);
+        } else if (category) {
+          this.subby.react('not_found', 'ไม่มีรายการในหมวดนี้');
+        }
+        return;
+      }
+
+      this.subby.refreshContext();
+    });
+  }
 
   ngOnInit(): void {
     if (this.store.subscriptions().length === 0) {

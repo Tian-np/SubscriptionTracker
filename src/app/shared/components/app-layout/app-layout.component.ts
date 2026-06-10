@@ -7,6 +7,7 @@ import { environment } from '../../../../environments/environment';
 import { NotificationService } from '../../../core/services/notification.service';
 import { PushNotificationService } from '../../../core/services/push-notification.service';
 import { SupabaseAuthService } from '../../../core/services/supabase-auth.service';
+import { SubbyService } from '../../../core/services/subby.service';
 import { SubscriptionStore } from '../../../core/stores/subscription.store';
 import { MobileBottomNavComponent } from '../mobile-bottom-nav/mobile-bottom-nav.component';
 import { NotificationPromptComponent } from '../notification-prompt/notification-prompt.component';
@@ -37,8 +38,6 @@ import { PixelBuddyComponent } from '../pixel-buddy/pixel-buddy.component';
       >
         <div class="mx-auto flex max-w-7xl items-center justify-between gap-2 px-safe p-4!">
           <div class="flex min-w-0 items-center gap-2">
-            <app-pixel-buddy mood="happy" [size]="36" class="hidden sm:block" />
-            <app-pixel-buddy mood="happy" [size]="28" class="sm:hidden" />
             <div class="min-w-0 leading-tight">
               <div class="flex items-center gap-2">
                 <h1 class="truncate text-sm font-semibold text-slate-100 sm:text-lg">SubTracker</h1>
@@ -107,7 +106,7 @@ import { PixelBuddyComponent } from '../pixel-buddy/pixel-buddy.component';
 
       <!-- Desktop floating buddy -->
       <div class="pointer-events-none fixed right-4 bottom-20 z-20 hidden lg:block">
-        <app-pixel-buddy mood="wave" [size]="72" speech="ยินดีต้อนรับกลับมา!" />
+        <app-pixel-buddy sync [size]="72" />
       </div>
     </div>
   `,
@@ -117,16 +116,21 @@ export class AppLayoutComponent implements OnInit {
   readonly push = inject(PushNotificationService);
   readonly auth = inject(SupabaseAuthService);
   private readonly notificationService = inject(NotificationService);
+  private readonly subby = inject(SubbyService);
 
   readonly useSupabase = environment.useSupabase;
 
   ngOnInit(): void {
     this.notificationService.init();
+    this.subby.refreshContext();
   }
 
   async toggleNotifications(): Promise<void> {
     if (!this.push.isSubscribed()) {
-      await this.push.enable();
+      const ok = await this.push.enable();
+      if (ok) {
+        this.subby.react('notify_on');
+      }
     }
   }
 
