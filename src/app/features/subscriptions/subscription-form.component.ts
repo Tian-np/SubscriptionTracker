@@ -1,5 +1,11 @@
 import { Component, effect, inject, input, output, signal } from '@angular/core';
-import { FormBuilder, FormControl, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormControl,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { Button } from 'primeng/button';
 import { DatePicker } from 'primeng/datepicker';
 import { InputNumber } from 'primeng/inputnumber';
@@ -79,6 +85,7 @@ import { toLocalDateString } from '../../core/utils/date.util';
             [formControl]="amountControl"
             mode="decimal"
             [min]="0.01"
+            placeholder="0.00"
             [minFractionDigits]="2"
             class="w-full"
           />
@@ -124,12 +131,7 @@ import { toLocalDateString } from '../../core/utils/date.util';
 
         <div>
           <label class="mb-1 block text-sm font-medium text-slate-300">แจ้งเตือนก่อน (วัน)</label>
-          <p-inputnumber
-            [formControl]="remindDaysControl"
-            [min]="0"
-            [max]="30"
-            class="w-full"
-          />
+          <p-inputnumber [formControl]="remindDaysControl" [min]="0" [max]="30" class="w-full" />
         </div>
 
         <div class="flex items-center gap-3 md:col-span-2">
@@ -162,22 +164,22 @@ import { toLocalDateString } from '../../core/utils/date.util';
                   class="w-full flex-1"
                 />
                 <div class="flex items-center gap-2">
-                <p-inputnumber
-                  [ngModel]="member.shareAmount"
-                  (ngModelChange)="updateMember(i, 'shareAmount', $event)"
-                  [ngModelOptions]="{ standalone: true }"
-                  mode="decimal"
-                  placeholder="จำนวน"
-                  class="w-full flex-1 sm:w-32"
-                />
-                <p-button
-                  type="button"
-                  icon="pi pi-trash"
-                  severity="danger"
-                  [text]="true"
-                  size="small"
-                  (onClick)="removeMember(i)"
-                />
+                  <p-inputnumber
+                    [ngModel]="member.shareAmount"
+                    (ngModelChange)="updateMember(i, 'shareAmount', $event)"
+                    [ngModelOptions]="{ standalone: true }"
+                    mode="decimal"
+                    placeholder="จำนวน"
+                    class="w-full flex-1 sm:w-32"
+                  />
+                  <p-button
+                    type="button"
+                    icon="pi pi-trash"
+                    severity="danger"
+                    [text]="true"
+                    size="small"
+                    (onClick)="removeMember(i)"
+                  />
                 </div>
               </div>
             }
@@ -187,7 +189,13 @@ import { toLocalDateString } from '../../core/utils/date.util';
 
       <div>
         <label class="mb-1 block text-sm font-medium text-slate-300">หมายเหตุ</label>
-        <textarea pTextarea formControlName="notes" rows="2" class="w-full" placeholder="หมายเหตุเพิ่มเติม"></textarea>
+        <textarea
+          pTextarea
+          formControlName="notes"
+          rows="2"
+          class="w-full text-slate-300!"
+          placeholder="หมายเหตุเพิ่มเติม"
+        ></textarea>
       </div>
 
       @if (store.error()) {
@@ -200,7 +208,7 @@ import { toLocalDateString } from '../../core/utils/date.util';
           label="ยกเลิก"
           severity="secondary"
           [text]="true"
-          styleClass="w-full sm:w-auto"
+          styleClass="w-full text-slate-300! sm:w-auto"
           (onClick)="cancelled.emit()"
         />
         <p-button
@@ -289,9 +297,7 @@ export class SubscriptionFormComponent {
     const value = typeof event === 'number' ? event : (event.target as HTMLInputElement).value;
     this.sharedMembers.update((list) =>
       list.map((m, i) =>
-        i === index
-          ? { ...m, [field]: field === 'shareAmount' ? Number(value) : value }
-          : m,
+        i === index ? { ...m, [field]: field === 'shareAmount' ? Number(value) : value } : m,
       ),
     );
   }
