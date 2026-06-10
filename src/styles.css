@@ -202,12 +202,55 @@ body {
   z-index: 1100 !important;
 }
 
+/* Dialog / confirm — midnight surfaces */
+.p-dialog,
+.p-confirmdialog {
+  background-color: var(--color-midnight-850) !important;
+  border-color: var(--color-midnight-700) !important;
+  color: #e2e8f0 !important;
+}
+
+.p-dialog-header,
+.p-confirmdialog .p-dialog-header {
+  background-color: var(--color-midnight-850) !important;
+  color: #f1f5f9 !important;
+}
+
+.p-dialog-title {
+  color: #f1f5f9 !important;
+}
+
+.p-dialog-content,
+.p-confirmdialog .p-dialog-content {
+  background-color: var(--color-midnight-850) !important;
+  color: #cbd5e1 !important;
+}
+
 .p-inputtext,
 .p-textarea,
-.p-inputnumber-input {
+.p-inputnumber-input,
+.p-select,
+.p-datepicker .p-datepicker-input {
   background-color: var(--color-midnight-800) !important;
   border-color: var(--color-midnight-600) !important;
   color: #e2e8f0 !important;
+}
+
+.p-select-label.p-placeholder {
+  color: #64748b !important;
+}
+
+.p-select-overlay,
+.p-datepicker-panel {
+  background-color: var(--color-midnight-850) !important;
+  border-color: var(--color-midnight-700) !important;
+  color: #cbd5e1 !important;
+}
+
+.p-select-option:not(.p-disabled).p-focus,
+.p-select-option:not(.p-disabled):hover {
+  background-color: var(--color-midnight-800) !important;
+  color: #f1f5f9 !important;
 }
 
 .p-inputtext::placeholder {
