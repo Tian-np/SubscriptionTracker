@@ -20,7 +20,9 @@ import { PixelLoaderComponent } from '../../shared/components/pixel-loader/pixel
       >
         <div class="flex items-center gap-3 sm:gap-4">
           <app-pixel-buddy
-            [mood]="store.loading() ? 'happy' : store.billingReminders().length > 0 ? 'excited' : 'happy'"
+            [mood]="
+              store.loading() ? 'happy' : store.billingReminders().length > 0 ? 'excited' : 'happy'
+            "
             [size]="52"
             [speech]="greeting()"
           />
@@ -45,13 +47,21 @@ import { PixelLoaderComponent } from '../../shared/components/pixel-loader/pixel
         </div>
       } @else {
         <div class="grid grid-cols-2 gap-3 lg:grid-cols-4 lg:gap-4">
-          <div class="pixel-card rounded-xl border border-midnight-700 bg-card p-3 sm:rounded-2xl sm:p-5">
+          <div
+            class="pixel-card rounded-xl border border-midnight-700 bg-card p-3 sm:rounded-2xl sm:p-5"
+          >
             <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-3">
-              <div class="rounded-lg border border-accent/15 bg-accent/10 p-2 sm:rounded-xl sm:p-3">
+              <div
+                class="rounded-lg border border-accent/15 bg-accent/10 p-2 sm:rounded-xl sm:p-3 flex justify-center"
+              >
                 <i class="pi pi-wallet text-accent text-sm sm:text-base"></i>
               </div>
               <div class="min-w-0">
-                <p class="text-[10px] font-medium uppercase tracking-wide text-slate-500 sm:text-xs">รวมต่อเดือน</p>
+                <p
+                  class="text-[10px] font-medium uppercase tracking-wide text-slate-500 sm:text-xs"
+                >
+                  รวมต่อเดือน
+                </p>
                 <p class="truncate text-lg font-bold text-slate-100 sm:text-2xl">
                   {{ store.monthlyTotal() | currencyFormat: store.baseCurrency() }}
                 </p>
@@ -59,13 +69,21 @@ import { PixelLoaderComponent } from '../../shared/components/pixel-loader/pixel
             </div>
           </div>
 
-          <div class="pixel-card rounded-xl border border-midnight-700 bg-card p-3 sm:rounded-2xl sm:p-5">
+          <div
+            class="pixel-card rounded-xl border border-midnight-700 bg-card p-3 sm:rounded-2xl sm:p-5"
+          >
             <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-3">
-              <div class="rounded-lg border border-emerald-500/15 bg-emerald-500/10 p-2 sm:rounded-xl sm:p-3">
+              <div
+                class="rounded-lg border border-emerald-500/15 bg-emerald-500/10 p-2 sm:rounded-xl sm:p-3 flex justify-center"
+              >
                 <i class="pi pi-check-circle text-emerald-400/90 text-sm sm:text-base"></i>
               </div>
               <div>
-                <p class="text-[10px] font-medium uppercase tracking-wide text-slate-500 sm:text-xs">ใช้งานอยู่</p>
+                <p
+                  class="text-[10px] font-medium uppercase tracking-wide text-slate-500 sm:text-xs"
+                >
+                  ใช้งานอยู่
+                </p>
                 <p class="text-lg font-bold text-slate-100 sm:text-2xl">
                   {{ store.activeSubscriptions().length }}
                 </p>
@@ -73,13 +91,21 @@ import { PixelLoaderComponent } from '../../shared/components/pixel-loader/pixel
             </div>
           </div>
 
-          <div class="pixel-card rounded-xl border border-midnight-700 bg-card p-3 sm:rounded-2xl sm:p-5">
+          <div
+            class="pixel-card rounded-xl border border-midnight-700 bg-card p-3 sm:rounded-2xl sm:p-5"
+          >
             <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-3">
-              <div class="rounded-lg border border-amber-500/15 bg-amber-500/10 p-2 sm:rounded-xl sm:p-3">
+              <div
+                class="rounded-lg border border-amber-500/15 bg-amber-500/10 p-2 sm:rounded-xl sm:p-3 flex justify-center"
+              >
                 <i class="pi pi-bell text-amber-400/90 text-sm sm:text-base"></i>
               </div>
               <div>
-                <p class="text-[10px] font-medium uppercase tracking-wide text-slate-500 sm:text-xs">ใกล้ตัดบัตร</p>
+                <p
+                  class="text-[10px] font-medium uppercase tracking-wide text-slate-500 sm:text-xs"
+                >
+                  ใกล้ตัดบัตร
+                </p>
                 <p class="text-lg font-bold text-slate-100 sm:text-2xl">
                   {{ store.billingReminders().length }}
                 </p>
@@ -87,13 +113,21 @@ import { PixelLoaderComponent } from '../../shared/components/pixel-loader/pixel
             </div>
           </div>
 
-          <div class="pixel-card rounded-xl border border-midnight-700 bg-card p-3 sm:rounded-2xl sm:p-5">
+          <div
+            class="pixel-card rounded-xl border border-midnight-700 bg-card p-3 sm:rounded-2xl sm:p-5"
+          >
             <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-3">
-              <div class="rounded-lg border border-rose-500/15 bg-rose-500/10 p-2 sm:rounded-xl sm:p-3">
+              <div
+                class="rounded-lg border border-rose-500/15 bg-rose-500/10 p-2 sm:rounded-xl sm:p-3 flex justify-center"
+              >
                 <i class="pi pi-times-circle text-rose-400/90 text-sm sm:text-base"></i>
               </div>
               <div>
-                <p class="text-[10px] font-medium uppercase tracking-wide text-slate-500 sm:text-xs">ไม่ได้ใช้แล้ว</p>
+                <p
+                  class="text-[10px] font-medium uppercase tracking-wide text-slate-500 sm:text-xs"
+                >
+                  ไม่ได้ใช้แล้ว
+                </p>
                 <p class="text-lg font-bold text-slate-100 sm:text-2xl">
                   {{ store.inactiveSubscriptions().length }}
                 </p>
@@ -104,7 +138,9 @@ import { PixelLoaderComponent } from '../../shared/components/pixel-loader/pixel
 
         <div class="grid gap-4 lg:grid-cols-2 lg:gap-6">
           <div class="rounded-xl border border-midnight-700 bg-card p-4 sm:rounded-2xl sm:p-5">
-            <h3 class="mb-3 flex items-center gap-2 text-base font-semibold text-slate-100 sm:mb-4 sm:text-lg">
+            <h3
+              class="mb-3 flex items-center gap-2 text-base font-semibold text-slate-100 sm:mb-4 sm:text-lg"
+            >
               <i class="pi pi-calendar text-accent"></i>
               กำหนดตัดบัตรถัดไป
             </h3>
@@ -149,7 +185,9 @@ import { PixelLoaderComponent } from '../../shared/components/pixel-loader/pixel
           </div>
 
           <div class="rounded-xl border border-midnight-700 bg-card p-4 sm:rounded-2xl sm:p-5">
-            <h3 class="mb-3 flex items-center gap-2 text-base font-semibold text-slate-100 sm:mb-4 sm:text-lg">
+            <h3
+              class="mb-3 flex items-center gap-2 text-base font-semibold text-slate-100 sm:mb-4 sm:text-lg"
+            >
               <i class="pi pi-chart-pie text-accent"></i>
               สรุปตามหมวด
             </h3>
@@ -183,8 +221,12 @@ import { PixelLoaderComponent } from '../../shared/components/pixel-loader/pixel
         </div>
 
         @if (store.inactiveSubscriptions().length > 0) {
-          <div class="rounded-xl border border-rose-900/50 bg-rose-950/30 p-4 sm:rounded-2xl sm:p-5">
-            <h3 class="mb-3 flex items-center gap-2 text-base font-semibold text-rose-300 sm:text-lg">
+          <div
+            class="rounded-xl border border-rose-900/50 bg-rose-950/30 p-4 sm:rounded-2xl sm:p-5"
+          >
+            <h3
+              class="mb-3 flex items-center gap-2 text-base font-semibold text-rose-300 sm:text-lg"
+            >
               <i class="pi pi-exclamation-triangle"></i>
               ไม่ได้ใช้แล้ว / ยกเลิกแล้ว
             </h3>
@@ -198,7 +240,9 @@ import { PixelLoaderComponent } from '../../shared/components/pixel-loader/pixel
 
         @if (store.sharedSubscriptions().length > 0) {
           <div class="rounded-xl border border-midnight-700 bg-card p-4 sm:rounded-2xl sm:p-5">
-            <h3 class="mb-3 flex items-center gap-2 text-base font-semibold text-slate-100 sm:mb-4 sm:text-lg">
+            <h3
+              class="mb-3 flex items-center gap-2 text-base font-semibold text-slate-100 sm:mb-4 sm:text-lg"
+            >
               <i class="pi pi-users text-accent"></i>
               Shared Subscriptions
             </h3>
@@ -207,12 +251,16 @@ import { PixelLoaderComponent } from '../../shared/components/pixel-loader/pixel
                 <div class="rounded-xl border border-midnight-700 bg-midnight-800/60 p-4">
                   <p class="font-medium text-slate-100">{{ sub.name }}</p>
                   <p class="mt-1 text-sm text-slate-500">
-                    รวม {{ sub.amount | currencyFormat: sub.currency }}/{{ cycleLabel(sub.billingCycle) }}
+                    รวม {{ sub.amount | currencyFormat: sub.currency }}/{{
+                      cycleLabel(sub.billingCycle)
+                    }}
                   </p>
                   <div class="mt-2 flex flex-wrap gap-1">
                     @for (member of sub.sharedMembers; track member.name) {
                       <p-tag
-                        [value]="member.name + ': ' + formatCurrency(member.shareAmount, sub.currency)"
+                        [value]="
+                          member.name + ': ' + formatCurrency(member.shareAmount, sub.currency)
+                        "
                         severity="info"
                         [rounded]="true"
                         class="text-xs"
