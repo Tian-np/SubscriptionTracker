@@ -36,13 +36,19 @@ import { SubscriptionFormComponent } from './subscription-form.component';
   template: `
     <p-confirmDialog />
 
-    <div class="space-y-6">
-      <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+    <div class="space-y-4 sm:space-y-6">
+      <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h2 class="text-2xl font-bold text-slate-900">Subscriptions</h2>
-          <p class="text-sm text-slate-500">จัดการรายการ subscription ทั้งหมด</p>
+          <h2 class="text-xl font-bold text-slate-100 sm:text-2xl">Subscriptions</h2>
+          <p class="text-xs text-slate-500 sm:text-sm">จัดการรายการ subscription ทั้งหมด</p>
         </div>
-        <p-button label="เพิ่มใหม่" icon="pi pi-plus" (onClick)="openAddDialog()" />
+        <p-button
+          label="เพิ่มใหม่"
+          icon="pi pi-plus"
+          (onClick)="openAddDialog()"
+          styleClass="w-full sm:w-auto"
+          class="btn-mobile-full hidden sm:inline-flex"
+        />
       </div>
 
       <!-- Filters -->
@@ -71,11 +77,11 @@ import { SubscriptionFormComponent } from './subscription-form.component';
 
       @if (store.loading() && store.subscriptions().length === 0) {
         <div class="flex items-center justify-center py-20">
-          <i class="pi pi-spin pi-spinner text-3xl text-indigo-500"></i>
+          <i class="pi pi-spin pi-spinner text-3xl text-accent"></i>
         </div>
       } @else if (store.filteredSubscriptions().length === 0) {
-        <div class="rounded-2xl border border-dashed border-slate-300 bg-white py-16 text-center">
-          <i class="pi pi-inbox mb-3 text-4xl text-slate-300"></i>
+        <div class="rounded-2xl border border-dashed border-midnight-600 bg-card py-16 text-center">
+          <i class="pi pi-inbox mb-3 text-4xl text-midnight-600"></i>
           <p class="text-slate-500">ไม่พบ subscription</p>
           <p-button
             label="เพิ่มรายการแรก"
@@ -85,13 +91,13 @@ import { SubscriptionFormComponent } from './subscription-form.component';
           />
         </div>
       } @else {
-        <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3">
           @for (sub of store.filteredSubscriptions(); track sub.id) {
             <div
-              class="group rounded-2xl border bg-white p-5 shadow-sm transition hover:shadow-md"
-              [class.border-slate-200]="sub.status === 'active'"
-              [class.border-rose-200]="sub.status === 'cancelled'"
-              [class.opacity-70]="sub.status !== 'active'"
+              class="group rounded-xl border bg-card p-4 transition sm:rounded-2xl sm:p-5 hover:border-midnight-600 hover:bg-midnight-800/40"
+              [class.border-midnight-700]="sub.status === 'active'"
+              [class.border-rose-900/60]="sub.status === 'cancelled'"
+              [class.opacity-60]="sub.status !== 'active'"
             >
               <div class="mb-3 flex items-start justify-between">
                 <div class="flex items-center gap-3">
@@ -104,7 +110,7 @@ import { SubscriptionFormComponent } from './subscription-form.component';
                     </div>
                   }
                   <div>
-                    <h3 class="font-semibold text-slate-900">{{ sub.name }}</h3>
+                    <h3 class="font-semibold text-slate-100">{{ sub.name }}</h3>
                     @if (store.getCategoryById(sub.categoryId); as cat) {
                       <p class="text-xs text-slate-500">{{ cat.name }}</p>
                     }
@@ -117,20 +123,20 @@ import { SubscriptionFormComponent } from './subscription-form.component';
                 />
               </div>
 
-              <div class="mb-4 space-y-1">
-                <p class="text-2xl font-bold text-slate-900">
+              <div class="mb-3 space-y-1.5 sm:mb-4">
+                <p class="text-xl font-bold text-slate-100 sm:text-2xl">
                   {{ sub.amount | currencyFormat: sub.currency }}
-                  <span class="text-sm font-normal text-slate-500">/{{ cycleLabel(sub.billingCycle) }}</span>
+                  <span class="text-xs font-normal text-slate-500 sm:text-sm">/{{ cycleLabel(sub.billingCycle) }}</span>
                 </p>
                 @if (sub.status === 'active') {
-                  <p class="text-sm text-slate-500">
-                    ตัดบัตร: {{ formatDate(sub.nextBillingDate) }}
+                  <div class="flex flex-wrap items-center gap-1.5 text-xs text-slate-500 sm:text-sm">
+                    <span>ตัดบัตร: {{ formatDate(sub.nextBillingDate) }}</span>
                     <p-tag
                       [value]="daysLabel(daysUntil(sub.nextBillingDate))"
                       [severity]="urgencySeverity(daysUntil(sub.nextBillingDate))"
-                      class="ml-1 text-xs"
+                      class="text-xs"
                     />
-                  </p>
+                  </div>
                 }
                 @if (sub.isShared) {
                   <p-tag value="Shared" icon="pi pi-users" severity="info" [rounded]="true" class="text-xs" />
@@ -141,18 +147,24 @@ import { SubscriptionFormComponent } from './subscription-form.component';
                 <p class="mb-3 text-xs text-slate-400 italic">{{ sub.notes }}</p>
               }
 
-              <div class="flex gap-1 opacity-0 transition group-hover:opacity-100">
+              <div
+                class="flex gap-2 border-t border-midnight-700 pt-3 sm:border-0 sm:pt-0 sm:opacity-0 sm:transition sm:group-hover:opacity-100"
+              >
                 <p-button
+                  label="แก้ไข"
                   icon="pi pi-pencil"
-                  [text]="true"
+                  [outlined]="true"
                   size="small"
+                  styleClass="flex-1 sm:flex-none"
                   (onClick)="openEditDialog(sub)"
                 />
                 <p-button
+                  label="ลบ"
                   icon="pi pi-trash"
                   severity="danger"
-                  [text]="true"
+                  [outlined]="true"
                   size="small"
+                  styleClass="flex-1 sm:flex-none"
                   (onClick)="confirmDelete(sub)"
                 />
               </div>
@@ -167,8 +179,10 @@ import { SubscriptionFormComponent } from './subscription-form.component';
       [visible]="dialogVisible()"
       (visibleChange)="onDialogVisibleChange($event)"
       [modal]="true"
+      [draggable]="false"
       [style]="{ width: '600px' }"
-      [breakpoints]="{ '640px': '95vw' }"
+      [breakpoints]="{ '768px': '600px', '0px': '100vw' }"
+      styleClass="mobile-sheet-dialog"
     >
       @if (dialogVisible()) {
         <app-subscription-form

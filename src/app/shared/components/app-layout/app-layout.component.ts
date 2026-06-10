@@ -11,6 +11,7 @@ import { NotificationService } from '../../../core/services/notification.service
 import { PushNotificationService } from '../../../core/services/push-notification.service';
 import { SupabaseAuthService } from '../../../core/services/supabase-auth.service';
 import { SubscriptionStore } from '../../../core/stores/subscription.store';
+import { MobileBottomNavComponent } from '../mobile-bottom-nav/mobile-bottom-nav.component';
 import { NotificationPromptComponent } from '../notification-prompt/notification-prompt.component';
 
 @Component({
@@ -24,56 +25,49 @@ import { NotificationPromptComponent } from '../notification-prompt/notification
     Select,
     Toast,
     NotificationPromptComponent,
+    MobileBottomNavComponent,
   ],
   template: `
     <p-toast position="top-right" />
 
-    <div class="min-h-dvh-safe bg-slate-50">
-      <header class="sticky top-0 z-50 border-b border-slate-200 bg-white/90 backdrop-blur-md pt-safe">
-        <div class="mx-auto flex max-w-7xl items-center justify-between gap-2 px-safe px-4 py-2.5 sm:gap-4 sm:px-6 sm:py-3">
-          <div class="flex min-w-0 items-center gap-2 sm:gap-3">
+    <div class="flex min-h-dvh-safe flex-col bg-app">
+      <!-- Header -->
+      <header
+        class="sticky top-0 z-40 shrink-0 border-b border-midnight-700 bg-midnight-900/95 pt-safe backdrop-blur-md"
+      >
+        <div class="mx-auto flex max-w-7xl items-center justify-between gap-2 px-safe p-4!">
+          <div class="flex min-w-0 items-center gap-2">
             <div
-              class="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-indigo-600 text-white shadow-sm sm:h-9 sm:w-9"
+              class="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-accent text-white sm:h-9 sm:w-9"
             >
               <i class="pi pi-wallet text-sm"></i>
             </div>
-            <div class="min-w-0">
-              <h1 class="truncate text-base font-semibold text-slate-900 sm:text-lg">SubTracker</h1>
+            <div class="min-w-0 leading-tight">
+              <h1 class="truncate text-sm font-semibold text-slate-100 sm:text-lg">SubTracker</h1>
               <p class="hidden text-xs text-slate-500 sm:block">จัดการ subscription ของคุณ</p>
             </div>
           </div>
 
-          <nav class="flex shrink-0 items-center gap-0.5 sm:gap-1">
+          <!-- Desktop nav -->
+          <nav class="hidden items-center gap-1 md:flex">
             <a
               routerLink="/"
-              routerLinkActive="bg-indigo-50 text-indigo-700"
+              routerLinkActive="bg-midnight-700 text-accent"
               [routerLinkActiveOptions]="{ exact: true }"
-              class="rounded-lg p-2 text-sm font-medium text-slate-600 transition hover:bg-slate-100 sm:px-3"
+              class="rounded-lg px-3 py-2 text-sm font-medium text-slate-400 transition hover:bg-midnight-800 hover:text-slate-200"
             >
-              <i class="pi pi-home sm:mr-1.5"></i>
-              <span class="hidden sm:inline">Dashboard</span>
+              <i class="pi pi-home mr-1.5"></i>Dashboard
             </a>
             <a
               routerLink="/subscriptions"
-              routerLinkActive="bg-indigo-50 text-indigo-700"
-              class="rounded-lg p-2 text-sm font-medium text-slate-600 transition hover:bg-slate-100 sm:px-3"
+              routerLinkActive="bg-midnight-700 text-accent"
+              class="rounded-lg px-3 py-2 text-sm font-medium text-slate-400 transition hover:bg-midnight-800 hover:text-slate-200"
             >
-              <i class="pi pi-list sm:mr-1.5"></i>
-              <span class="hidden sm:inline">Subscriptions</span>
+              <i class="pi pi-list mr-1.5"></i>Subscriptions
             </a>
           </nav>
 
-          <div class="flex shrink-0 items-center gap-1 sm:gap-2">
-            @if (useSupabase && auth.isAuthenticated()) {
-              <p-button
-                icon="pi pi-sign-out"
-                severity="secondary"
-                [text]="true"
-                size="small"
-                [title]="auth.username()"
-                (onClick)="signOut()"
-              />
-            }
+          <div class="flex shrink-0 items-center gap-0.5 sm:gap-2">
             @if (push.permission() === 'granted') {
               <p-button
                 [icon]="push.isSubscribed() ? 'pi pi-bell' : 'pi pi-bell-slash'"
@@ -84,24 +78,30 @@ import { NotificationPromptComponent } from '../notification-prompt/notification
                 (onClick)="toggleNotifications()"
               />
             }
-            <p-select
-              [options]="currencies"
-              [ngModel]="store.baseCurrency()"
-              (ngModelChange)="store.setBaseCurrency($event)"
-              optionLabel="label"
-              optionValue="value"
-              class="w-20 sm:w-28"
-              size="small"
-            />
+            @if (useSupabase && auth.isAuthenticated()) {
+              <p-button
+                icon="pi pi-sign-out"
+                severity="secondary"
+                [text]="true"
+                size="small"
+                [title]="auth.username()"
+                (onClick)="signOut()"
+              />
+            }
           </div>
         </div>
       </header>
 
       <app-notification-prompt />
 
-      <main class="mx-auto max-w-7xl px-safe px-4 py-4 pb-safe sm:px-6 sm:py-6">
+      <!-- Main — extra bottom padding on mobile for tab bar -->
+      <main
+        class="mx-auto w-full max-w-7xl flex-1 px-safe p-6! pb-nav-safe sm:px-6 sm:py-6 md:pb-safe"
+      >
         <router-outlet />
       </main>
+
+      <app-mobile-bottom-nav />
     </div>
   `,
 })

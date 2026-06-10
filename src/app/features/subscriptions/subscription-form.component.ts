@@ -36,9 +36,9 @@ import { toLocalDateString } from '../../core/utils/date.util';
   ],
   template: `
     <form [formGroup]="form" (ngSubmit)="onSubmit()" class="space-y-4">
-      <div class="grid gap-4 sm:grid-cols-2">
-        <div class="sm:col-span-2">
-          <label class="mb-1 block text-sm font-medium text-slate-700">ชื่อ</label>
+      <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+        <div class="md:col-span-2">
+          <label class="mb-1 block text-sm font-medium text-slate-300">ชื่อ</label>
           <input pInputText formControlName="name" class="w-full" placeholder="เช่น Netflix" />
           @if (form.controls.name.touched && form.controls.name.errors?.['required']) {
             <p class="mt-1 text-xs text-red-500">กรุณากรอกชื่อ</p>
@@ -46,7 +46,7 @@ import { toLocalDateString } from '../../core/utils/date.util';
         </div>
 
         <div>
-          <label class="mb-1 block text-sm font-medium text-slate-700">หมวด</label>
+          <label class="mb-1 block text-sm font-medium text-slate-300">หมวด</label>
           <p-select
             [formControl]="categoryControl"
             [options]="store.categories()"
@@ -62,7 +62,7 @@ import { toLocalDateString } from '../../core/utils/date.util';
         </div>
 
         <div>
-          <label class="mb-1 block text-sm font-medium text-slate-700">สถานะ</label>
+          <label class="mb-1 block text-sm font-medium text-slate-300">สถานะ</label>
           <p-select
             [formControl]="statusControl"
             [options]="statusOptions"
@@ -74,7 +74,7 @@ import { toLocalDateString } from '../../core/utils/date.util';
         </div>
 
         <div>
-          <label class="mb-1 block text-sm font-medium text-slate-700">จำนวนเงิน</label>
+          <label class="mb-1 block text-sm font-medium text-slate-300">จำนวนเงิน</label>
           <p-inputnumber
             [formControl]="amountControl"
             mode="decimal"
@@ -88,7 +88,7 @@ import { toLocalDateString } from '../../core/utils/date.util';
         </div>
 
         <div>
-          <label class="mb-1 block text-sm font-medium text-slate-700">สกุลเงิน</label>
+          <label class="mb-1 block text-sm font-medium text-slate-300">สกุลเงิน</label>
           <p-select
             [formControl]="currencyControl"
             [options]="currencyOptions"
@@ -100,7 +100,7 @@ import { toLocalDateString } from '../../core/utils/date.util';
         </div>
 
         <div>
-          <label class="mb-1 block text-sm font-medium text-slate-700">รอบบิล</label>
+          <label class="mb-1 block text-sm font-medium text-slate-300">รอบบิล</label>
           <p-select
             [formControl]="billingCycleControl"
             [options]="cycleOptions"
@@ -112,7 +112,7 @@ import { toLocalDateString } from '../../core/utils/date.util';
         </div>
 
         <div>
-          <label class="mb-1 block text-sm font-medium text-slate-700">วันตัดบัตรถัดไป</label>
+          <label class="mb-1 block text-sm font-medium text-slate-300">วันตัดบัตรถัดไป</label>
           <p-datepicker
             [formControl]="nextBillingDateControl"
             dateFormat="dd/mm/yy"
@@ -123,7 +123,7 @@ import { toLocalDateString } from '../../core/utils/date.util';
         </div>
 
         <div>
-          <label class="mb-1 block text-sm font-medium text-slate-700">แจ้งเตือนก่อน (วัน)</label>
+          <label class="mb-1 block text-sm font-medium text-slate-300">แจ้งเตือนก่อน (วัน)</label>
           <p-inputnumber
             [formControl]="remindDaysControl"
             [min]="0"
@@ -132,16 +132,16 @@ import { toLocalDateString } from '../../core/utils/date.util';
           />
         </div>
 
-        <div class="flex items-center gap-3 sm:col-span-2">
+        <div class="flex items-center gap-3 md:col-span-2">
           <p-toggleswitch [formControl]="isSharedControl" />
-          <label class="text-sm font-medium text-slate-700">Shared subscription</label>
+          <label class="text-sm font-medium text-slate-300">Shared subscription</label>
         </div>
       </div>
 
       @if (isSharedControl.value) {
-        <div class="rounded-xl border border-slate-200 bg-slate-50 p-4">
+        <div class="rounded-xl border border-midnight-700 bg-midnight-800/50 p-4">
           <div class="mb-3 flex items-center justify-between">
-            <p class="text-sm font-medium text-slate-700">สมาชิกที่แชร์</p>
+            <p class="text-sm font-medium text-slate-300">สมาชิกที่แชร์</p>
             <p-button
               type="button"
               label="เพิ่มสมาชิก"
@@ -153,21 +153,22 @@ import { toLocalDateString } from '../../core/utils/date.util';
           </div>
           <div class="space-y-2">
             @for (member of sharedMembers(); track $index; let i = $index) {
-              <div class="flex items-center gap-2">
+              <div class="flex flex-col gap-2 sm:flex-row sm:items-center">
                 <input
                   pInputText
                   [value]="member.name"
                   (input)="updateMember(i, 'name', $event)"
                   placeholder="ชื่อ"
-                  class="flex-1"
+                  class="w-full flex-1"
                 />
+                <div class="flex items-center gap-2">
                 <p-inputnumber
                   [ngModel]="member.shareAmount"
                   (ngModelChange)="updateMember(i, 'shareAmount', $event)"
                   [ngModelOptions]="{ standalone: true }"
                   mode="decimal"
                   placeholder="จำนวน"
-                  class="w-32"
+                  class="w-full flex-1 sm:w-32"
                 />
                 <p-button
                   type="button"
@@ -177,6 +178,7 @@ import { toLocalDateString } from '../../core/utils/date.util';
                   size="small"
                   (onClick)="removeMember(i)"
                 />
+                </div>
               </div>
             }
           </div>
@@ -184,7 +186,7 @@ import { toLocalDateString } from '../../core/utils/date.util';
       }
 
       <div>
-        <label class="mb-1 block text-sm font-medium text-slate-700">หมายเหตุ</label>
+        <label class="mb-1 block text-sm font-medium text-slate-300">หมายเหตุ</label>
         <textarea pTextarea formControlName="notes" rows="2" class="w-full" placeholder="หมายเหตุเพิ่มเติม"></textarea>
       </div>
 
@@ -192,14 +194,22 @@ import { toLocalDateString } from '../../core/utils/date.util';
         <p-message severity="error" [text]="store.error()!" />
       }
 
-      <div class="flex justify-end gap-2 pt-2">
-        <p-button type="button" label="ยกเลิก" severity="secondary" [text]="true" (onClick)="cancelled.emit()" />
+      <div class="flex flex-col-reverse gap-2 pt-2 sm:flex-row sm:justify-end">
+        <p-button
+          type="button"
+          label="ยกเลิก"
+          severity="secondary"
+          [text]="true"
+          styleClass="w-full sm:w-auto"
+          (onClick)="cancelled.emit()"
+        />
         <p-button
           type="submit"
           [label]="subscription() ? 'บันทึก' : 'เพิ่ม'"
           icon="pi pi-check"
           [loading]="saving()"
           [disabled]="form.invalid"
+          styleClass="w-full sm:w-auto"
         />
       </div>
     </form>

@@ -26,17 +26,41 @@ function initAuth(auth: SupabaseAuthService): () => Promise<void> {
 const SubTrackerPreset = definePreset(Aura, {
   semantic: {
     primary: {
-      50: '{indigo.50}',
-      100: '{indigo.100}',
-      200: '{indigo.200}',
-      300: '{indigo.300}',
-      400: '{indigo.400}',
-      500: '{indigo.500}',
-      600: '{indigo.600}',
-      700: '{indigo.700}',
-      800: '{indigo.800}',
-      900: '{indigo.900}',
-      950: '{indigo.950}',
+      50: '#eef3ff',
+      100: '#d9e4ff',
+      200: '#bccfff',
+      300: '#8eb0ff',
+      400: '#6b94ff',
+      500: '#4d7cff',
+      600: '#3b5fbf',
+      700: '#2f4a99',
+      800: '#243a78',
+      900: '#1a2b57',
+      950: '#0f1a35',
+    },
+    colorScheme: {
+      dark: {
+        surface: {
+          0: '#e2e8f0',
+          50: '#131d33',
+          100: '#1a2744',
+          200: '#243352',
+          300: '#2e3f66',
+          400: '#3d527a',
+          500: '#4d658e',
+          600: '#64748b',
+          700: '#94a3b8',
+          800: '#cbd5e1',
+          900: '#f1f5f9',
+          950: '#ffffff',
+        },
+        primary: {
+          color: '#6b94ff',
+          contrastColor: '#060b14',
+          hoverColor: '#8eb0ff',
+          activeColor: '#4d7cff',
+        },
+      },
     },
   },
 });
@@ -51,7 +75,8 @@ export const appConfig: ApplicationConfig = {
       theme: {
         preset: SubTrackerPreset,
         options: {
-          darkModeSelector: false,
+          darkModeSelector: '.dark-mode',
+          cssLayer: false,
         },
       },
     }),

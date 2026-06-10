@@ -12,83 +12,78 @@ import { CurrencyFormatPipe } from '../../shared/pipes/currency-format.pipe';
   selector: 'app-dashboard',
   imports: [RouterLink, Button, Tag, CurrencyFormatPipe],
   template: `
-    <div class="space-y-6">
-      <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+    <div class="space-y-4 sm:space-y-6">
+      <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h2 class="text-2xl font-bold text-slate-900">Dashboard</h2>
-          <p class="text-sm text-slate-500">ภาพรวม subscription ของคุณในเดือนนี้</p>
+          <h2 class="text-xl font-bold text-slate-100 sm:text-2xl">Dashboard</h2>
+          <p class="text-xs text-slate-500 sm:text-sm">ภาพรวม subscription ของคุณในเดือนนี้</p>
         </div>
         <p-button
           label="เพิ่ม Subscription"
           icon="pi pi-plus"
           routerLink="/subscriptions"
           [queryParams]="{ action: 'add' }"
+          styleClass="w-full sm:w-auto"
+          class="btn-mobile-full hidden sm:inline-flex"
         />
       </div>
 
       @if (store.loading()) {
         <div class="flex items-center justify-center py-20">
-          <i class="pi pi-spin pi-spinner text-3xl text-indigo-500"></i>
+          <i class="pi pi-spin pi-spinner text-3xl text-accent"></i>
         </div>
       } @else {
-        <!-- Summary Cards -->
-        <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-            <div class="flex items-center gap-3">
-              <div class="rounded-xl bg-indigo-100 p-3">
-                <i class="pi pi-wallet text-indigo-600"></i>
+        <div class="grid grid-cols-2 gap-3 lg:grid-cols-4 lg:gap-4">
+          <div class="rounded-xl border border-midnight-700 bg-card p-3 sm:rounded-2xl sm:p-5">
+            <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-3">
+              <div class="rounded-lg bg-accent/15 p-2 sm:rounded-xl sm:p-3">
+                <i class="pi pi-wallet text-accent text-sm sm:text-base"></i>
               </div>
-              <div>
-                <p class="text-xs font-medium uppercase tracking-wide text-slate-500">
-                  รวมต่อเดือน
-                </p>
-                <p class="text-2xl font-bold text-slate-900">
+              <div class="min-w-0">
+                <p class="text-[10px] font-medium uppercase tracking-wide text-slate-500 sm:text-xs">รวมต่อเดือน</p>
+                <p class="truncate text-lg font-bold text-slate-100 sm:text-2xl">
                   {{ store.monthlyTotal() | currencyFormat: store.baseCurrency() }}
                 </p>
               </div>
             </div>
           </div>
 
-          <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-            <div class="flex items-center gap-3">
-              <div class="rounded-xl bg-emerald-100 p-3">
-                <i class="pi pi-check-circle text-emerald-600"></i>
+          <div class="rounded-xl border border-midnight-700 bg-card p-3 sm:rounded-2xl sm:p-5">
+            <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-3">
+              <div class="rounded-lg bg-emerald-500/15 p-2 sm:rounded-xl sm:p-3">
+                <i class="pi pi-check-circle text-emerald-400 text-sm sm:text-base"></i>
               </div>
               <div>
-                <p class="text-xs font-medium uppercase tracking-wide text-slate-500">ใช้งานอยู่</p>
-                <p class="text-2xl font-bold text-slate-900">
+                <p class="text-[10px] font-medium uppercase tracking-wide text-slate-500 sm:text-xs">ใช้งานอยู่</p>
+                <p class="text-lg font-bold text-slate-100 sm:text-2xl">
                   {{ store.activeSubscriptions().length }}
                 </p>
               </div>
             </div>
           </div>
 
-          <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-            <div class="flex items-center gap-3">
-              <div class="rounded-xl bg-amber-100 p-3">
-                <i class="pi pi-bell text-amber-600"></i>
+          <div class="rounded-xl border border-midnight-700 bg-card p-3 sm:rounded-2xl sm:p-5">
+            <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-3">
+              <div class="rounded-lg bg-amber-500/15 p-2 sm:rounded-xl sm:p-3">
+                <i class="pi pi-bell text-amber-400 text-sm sm:text-base"></i>
               </div>
               <div>
-                <p class="text-xs font-medium uppercase tracking-wide text-slate-500">
-                  ใกล้ตัดบัตร
-                </p>
-                <p class="text-2xl font-bold text-slate-900">
+                <p class="text-[10px] font-medium uppercase tracking-wide text-slate-500 sm:text-xs">ใกล้ตัดบัตร</p>
+                <p class="text-lg font-bold text-slate-100 sm:text-2xl">
                   {{ store.billingReminders().length }}
                 </p>
               </div>
             </div>
           </div>
 
-          <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-            <div class="flex items-center gap-3">
-              <div class="rounded-xl bg-rose-100 p-3">
-                <i class="pi pi-times-circle text-rose-600"></i>
+          <div class="rounded-xl border border-midnight-700 bg-card p-3 sm:rounded-2xl sm:p-5">
+            <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-3">
+              <div class="rounded-lg bg-rose-500/15 p-2 sm:rounded-xl sm:p-3">
+                <i class="pi pi-times-circle text-rose-400 text-sm sm:text-base"></i>
               </div>
               <div>
-                <p class="text-xs font-medium uppercase tracking-wide text-slate-500">
-                  ไม่ได้ใช้แล้ว
-                </p>
-                <p class="text-2xl font-bold text-slate-900">
+                <p class="text-[10px] font-medium uppercase tracking-wide text-slate-500 sm:text-xs">ไม่ได้ใช้แล้ว</p>
+                <p class="text-lg font-bold text-slate-100 sm:text-2xl">
                   {{ store.inactiveSubscriptions().length }}
                 </p>
               </div>
@@ -96,22 +91,21 @@ import { CurrencyFormatPipe } from '../../shared/pipes/currency-format.pipe';
           </div>
         </div>
 
-        <div class="grid gap-6 lg:grid-cols-2">
-          <!-- Upcoming Billings -->
-          <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-            <h3 class="mb-4 flex items-center gap-2 text-lg font-semibold text-slate-900">
-              <i class="pi pi-calendar text-indigo-500"></i>
+        <div class="grid gap-4 lg:grid-cols-2 lg:gap-6">
+          <div class="rounded-xl border border-midnight-700 bg-card p-4 sm:rounded-2xl sm:p-5">
+            <h3 class="mb-3 flex items-center gap-2 text-base font-semibold text-slate-100 sm:mb-4 sm:text-lg">
+              <i class="pi pi-calendar text-accent"></i>
               กำหนดตัดบัตรถัดไป
             </h3>
             @if (store.upcomingBillings().length === 0) {
-              <p class="py-8 text-center text-sm text-slate-400">ไม่มีรายการใน 30 วันข้างหน้า</p>
+              <p class="py-8 text-center text-sm text-slate-600">ไม่มีรายการใน 30 วันข้างหน้า</p>
             } @else {
               <div class="space-y-3">
                 @for (item of store.upcomingBillings(); track item.subscription.id) {
                   <div
-                    class="flex items-center justify-between rounded-xl border border-slate-100 bg-slate-50 px-4 py-3"
+                    class="flex flex-col gap-2 rounded-xl border border-midnight-700 bg-midnight-800/60 px-3 py-3 sm:flex-row sm:items-center sm:justify-between sm:px-4"
                   >
-                    <div class="flex items-center gap-3">
+                    <div class="flex min-w-0 items-center gap-3">
                       @if (store.getCategoryById(item.subscription.categoryId); as cat) {
                         <div
                           class="flex h-9 w-9 items-center justify-center rounded-lg text-white"
@@ -121,20 +115,20 @@ import { CurrencyFormatPipe } from '../../shared/pipes/currency-format.pipe';
                         </div>
                       }
                       <div>
-                        <p class="font-medium text-slate-900">{{ item.subscription.name }}</p>
+                        <p class="font-medium text-slate-100">{{ item.subscription.name }}</p>
                         <p class="text-xs text-slate-500">
                           {{ formatDate(item.subscription.nextBillingDate) }}
                         </p>
                       </div>
                     </div>
-                    <div class="text-right">
-                      <p class="font-semibold text-slate-900">
+                    <div class="flex items-center justify-between gap-2 sm:block sm:text-right">
+                      <p class="font-semibold text-slate-100">
                         {{ item.amountInBaseCurrency | currencyFormat: store.baseCurrency() }}
                       </p>
                       <p-tag
                         [value]="daysLabel(item.daysUntil)"
                         [severity]="urgencySeverity(item.daysUntil)"
-                        class="text-xs"
+                        class="shrink-0 text-xs"
                       />
                     </div>
                   </div>
@@ -143,28 +137,27 @@ import { CurrencyFormatPipe } from '../../shared/pipes/currency-format.pipe';
             }
           </div>
 
-          <!-- Category Breakdown -->
-          <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-            <h3 class="mb-4 flex items-center gap-2 text-lg font-semibold text-slate-900">
-              <i class="pi pi-chart-pie text-indigo-500"></i>
+          <div class="rounded-xl border border-midnight-700 bg-card p-4 sm:rounded-2xl sm:p-5">
+            <h3 class="mb-3 flex items-center gap-2 text-base font-semibold text-slate-100 sm:mb-4 sm:text-lg">
+              <i class="pi pi-chart-pie text-accent"></i>
               สรุปตามหมวด
             </h3>
             @if (store.categoryBreakdown().length === 0) {
-              <p class="py-8 text-center text-sm text-slate-400">ยังไม่มีข้อมูล</p>
+              <p class="py-8 text-center text-sm text-slate-600">ยังไม่มีข้อมูล</p>
             } @else {
               <div class="space-y-3">
                 @for (item of store.categoryBreakdown(); track item.category.id) {
                   <div>
                     <div class="mb-1 flex items-center justify-between text-sm">
-                      <span class="flex items-center gap-2 font-medium text-slate-700">
+                      <span class="flex items-center gap-2 font-medium text-slate-300">
                         <i [class]="item.category.icon" [style.color]="item.category.color"></i>
                         {{ item.category.name }}
                       </span>
-                      <span class="font-semibold text-slate-900">
+                      <span class="font-semibold text-slate-100">
                         {{ item.total | currencyFormat: store.baseCurrency() }}
                       </span>
                     </div>
-                    <div class="h-2 overflow-hidden rounded-full bg-slate-100">
+                    <div class="h-1.5 overflow-hidden rounded-full bg-midnight-700">
                       <div
                         class="h-full rounded-full transition-all"
                         [style.width.%]="percentOfTotal(item.total)"
@@ -178,36 +171,30 @@ import { CurrencyFormatPipe } from '../../shared/pipes/currency-format.pipe';
           </div>
         </div>
 
-        <!-- Inactive / Unused -->
         @if (store.inactiveSubscriptions().length > 0) {
-          <div class="rounded-2xl border border-rose-200 bg-rose-50/50 p-5">
-            <h3 class="mb-3 flex items-center gap-2 text-lg font-semibold text-rose-800">
+          <div class="rounded-xl border border-rose-900/50 bg-rose-950/30 p-4 sm:rounded-2xl sm:p-5">
+            <h3 class="mb-3 flex items-center gap-2 text-base font-semibold text-rose-300 sm:text-lg">
               <i class="pi pi-exclamation-triangle"></i>
               ไม่ได้ใช้แล้ว / ยกเลิกแล้ว
             </h3>
             <div class="flex flex-wrap gap-2">
               @for (sub of store.inactiveSubscriptions(); track sub.id) {
-                <p-tag
-                  [value]="sub.name"
-                  severity="danger"
-                  [rounded]="true"
-                />
+                <p-tag [value]="sub.name" severity="danger" [rounded]="true" />
               }
             </div>
           </div>
         }
 
-        <!-- Shared Subscriptions -->
         @if (store.sharedSubscriptions().length > 0) {
-          <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-            <h3 class="mb-4 flex items-center gap-2 text-lg font-semibold text-slate-900">
-              <i class="pi pi-users text-indigo-500"></i>
+          <div class="rounded-xl border border-midnight-700 bg-card p-4 sm:rounded-2xl sm:p-5">
+            <h3 class="mb-3 flex items-center gap-2 text-base font-semibold text-slate-100 sm:mb-4 sm:text-lg">
+              <i class="pi pi-users text-accent"></i>
               Shared Subscriptions
             </h3>
             <div class="grid gap-3 sm:grid-cols-2">
               @for (sub of store.sharedSubscriptions(); track sub.id) {
-                <div class="rounded-xl border border-slate-100 bg-slate-50 p-4">
-                  <p class="font-medium text-slate-900">{{ sub.name }}</p>
+                <div class="rounded-xl border border-midnight-700 bg-midnight-800/60 p-4">
+                  <p class="font-medium text-slate-100">{{ sub.name }}</p>
                   <p class="mt-1 text-sm text-slate-500">
                     รวม {{ sub.amount | currencyFormat: sub.currency }}/{{ cycleLabel(sub.billingCycle) }}
                   </p>

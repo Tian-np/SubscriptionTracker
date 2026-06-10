@@ -12,21 +12,21 @@ import { SupabaseAuthService } from '../../core/services/supabase-auth.service';
   selector: 'app-login',
   imports: [ReactiveFormsModule, Button, InputText, Password, Message],
   template: `
-    <div class="flex min-h-dvh-safe items-center justify-center bg-slate-50 px-4 px-safe pt-safe pb-safe">
-      <div class="w-full max-w-md rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
+    <div class="flex min-h-dvh-safe items-center justify-center bg-app px-4 px-safe pt-safe pb-safe">
+      <div class="w-full max-w-md rounded-2xl border border-midnight-700 bg-card p-5 sm:p-8">
         <div class="mb-6 text-center">
           <div
-            class="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-indigo-600 text-white"
+            class="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-accent text-white"
           >
             <i class="pi pi-wallet"></i>
           </div>
-          <h1 class="text-2xl font-bold text-slate-900">SubTracker</h1>
+          <h1 class="text-2xl font-bold text-slate-100">SubTracker</h1>
           <p class="mt-1 text-sm text-slate-500">{{ isSignUp ? 'สมัครสมาชิก' : 'เข้าสู่ระบบ' }}</p>
         </div>
 
         <form [formGroup]="form" (ngSubmit)="submit()" class="space-y-4">
           <div>
-            <label class="mb-1 block text-sm font-medium text-slate-700">ชื่อผู้ใช้</label>
+            <label class="mb-1 block text-sm font-medium text-slate-300">ชื่อผู้ใช้</label>
             <input
               pInputText
               formControlName="username"
@@ -40,7 +40,7 @@ import { SupabaseAuthService } from '../../core/services/supabase-auth.service';
           </div>
 
           <div>
-            <label class="mb-1 block text-sm font-medium text-slate-700">รหัสผ่าน</label>
+            <label class="mb-1 block text-sm font-medium text-slate-300">รหัสผ่าน</label>
             <p-password
               formControlName="password"
               [feedback]="isSignUp"
@@ -69,7 +69,7 @@ import { SupabaseAuthService } from '../../core/services/supabase-auth.service';
 
         <p class="mt-4 text-center text-sm text-slate-500">
           {{ isSignUp ? 'มีบัญชีแล้ว?' : 'ยังไม่มีบัญชี?' }}
-          <button type="button" class="font-medium text-indigo-600 hover:underline" (click)="toggleMode()">
+          <button type="button" class="font-medium text-accent hover:underline" (click)="toggleMode()">
             {{ isSignUp ? 'เข้าสู่ระบบ' : 'สมัครสมาชิก' }}
           </button>
         </p>
