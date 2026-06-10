@@ -25,6 +25,7 @@ import {
 } from '../../core/models/subscription.model';
 import { SubscriptionStore } from '../../core/stores/subscription.store';
 import { toLocalDateString } from '../../core/utils/date.util';
+import { IconPickerComponent } from '../../shared/components/icon-picker/icon-picker.component';
 
 @Component({
   selector: 'app-subscription-form',
@@ -39,6 +40,7 @@ import { toLocalDateString } from '../../core/utils/date.util';
     Select,
     Textarea,
     ToggleSwitch,
+    IconPickerComponent,
   ],
   template: `
     <form [formGroup]="form" (ngSubmit)="onSubmit()" class="space-y-4">
@@ -66,6 +68,17 @@ import { toLocalDateString } from '../../core/utils/date.util';
             <p class="mt-1 text-xs text-red-500">กรุณาเลือกหมวด</p>
           }
         </div>
+
+        @if (categoryControl.value) {
+          <div class="md:col-span-2">
+            <label class="mb-1 block text-sm font-medium text-slate-300">ไอคอน</label>
+            <app-icon-picker
+              [categoryId]="categoryControl.value"
+              [selected]="iconControl.value"
+              (selectedChange)="onIconPicked($event)"
+            />
+          </div>
+        }
 
         <div>
           <label class="mb-1 block text-sm font-medium text-slate-300">สถานะ</label>
@@ -234,6 +247,7 @@ export class SubscriptionFormComponent {
 
   readonly sharedMembers = signal<SharedMember[]>([]);
   readonly saving = signal(false);
+  private iconManuallySet = false;
 
   readonly statusOptions = [
     { label: 'ใช้งานอยู่', value: 'active' as SubscriptionStatus },
@@ -260,9 +274,11 @@ export class SubscriptionFormComponent {
     isShared: [false],
     notes: [''],
     remindDaysBefore: [3, [Validators.required, Validators.min(0)]],
+    icon: [''],
   });
 
   readonly categoryControl = this.form.controls.categoryId as FormControl<string>;
+  readonly iconControl = this.form.controls.icon as FormControl<string>;
   readonly statusControl = this.form.controls.status as FormControl<SubscriptionStatus>;
   readonly amountControl = this.form.controls.amount as FormControl<number | null>;
   readonly currencyControl = this.form.controls.currency as FormControl<string>;
@@ -283,6 +299,17 @@ export class SubscriptionFormComponent {
         this.loadNewForm();
       }
     });
+
+    this.categoryControl.valueChanges.subscribe((categoryId) => {
+      if (!categoryId || this.iconManuallySet) return;
+      const cat = this.store.getCategoryById(categoryId);
+      if (cat) this.iconControl.setValue(cat.icon);
+    });
+  }
+
+  onIconPicked(icon: string): void {
+    this.iconManuallySet = true;
+    this.iconControl.setValue(icon);
   }
 
   addMember(): void {
@@ -319,6 +346,7 @@ export class SubscriptionFormComponent {
       sharedMembers: raw.isShared ? this.sharedMembers() : [],
       notes: raw.notes || undefined,
       remindDaysBefore: raw.remindDaysBefore!,
+      icon: raw.icon || undefined,
     };
 
     this.saving.set(true);
@@ -339,6 +367,7 @@ export class SubscriptionFormComponent {
   }
 
   private loadNewForm(): void {
+    this.iconManuallySet = false;
     this.form.reset({
       name: '',
       categoryId: '',
@@ -350,6 +379,7 @@ export class SubscriptionFormComponent {
       isShared: false,
       notes: '',
       remindDaysBefore: 3,
+      icon: '',
     });
     this.form.markAsUntouched();
     this.form.markAsPristine();
@@ -358,6 +388,10 @@ export class SubscriptionFormComponent {
   }
 
   private loadEditForm(sub: Subscription): void {
+    const cat = this.store.getCategoryById(sub.categoryId);
+    const icon = sub.icon ?? cat?.icon ?? '';
+    this.iconManuallySet = Boolean(sub.icon && sub.icon !== cat?.icon);
+
     this.form.reset({
       name: sub.name,
       categoryId: sub.categoryId,
@@ -369,6 +403,7 @@ export class SubscriptionFormComponent {
       isShared: sub.isShared,
       notes: sub.notes ?? '',
       remindDaysBefore: sub.remindDaysBefore,
+      icon,
     });
     this.form.markAsUntouched();
     this.form.markAsPristine();

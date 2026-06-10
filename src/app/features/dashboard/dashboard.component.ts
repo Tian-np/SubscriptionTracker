@@ -152,7 +152,7 @@ import { PixelLoaderComponent } from '../../shared/components/pixel-loader/pixel
                           class="flex h-9 w-9 items-center justify-center rounded-lg text-white"
                           [style.background-color]="cat.color"
                         >
-                          <i [class]="cat.icon + ' text-sm'"></i>
+                          <i [class]="store.getDisplayIcon(item.subscription) + ' text-sm'"></i>
                         </div>
                       }
                       <div>

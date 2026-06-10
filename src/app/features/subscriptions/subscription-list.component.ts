@@ -113,7 +113,7 @@ import { SubscriptionFormComponent } from './subscription-form.component';
                       class="flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 text-white shadow-sm"
                       [style.background-color]="cat.color + 'cc'"
                     >
-                      <i [class]="cat.icon + ' text-sm'"></i>
+                      <i [class]="store.getDisplayIcon(sub) + ' text-sm'"></i>
                     </div>
                   }
                   <div>

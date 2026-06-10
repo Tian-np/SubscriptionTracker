@@ -232,6 +232,11 @@ export class SubscriptionStore {
     return this.categories().find((c) => c.id === id);
   }
 
+  getDisplayIcon(sub: Subscription): string {
+    if (sub.icon) return sub.icon;
+    return this.getCategoryById(sub.categoryId)?.icon ?? 'pi pi-wallet';
+  }
+
   convertAmount(amount: number, from: string): number {
     const rates = this.exchangeRates();
     if (!rates) return amount;
