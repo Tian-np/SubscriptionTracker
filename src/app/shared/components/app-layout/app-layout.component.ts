@@ -96,7 +96,7 @@ import { PixelBuddyComponent } from '../pixel-buddy/pixel-buddy.component';
 
       <!-- Main — extra bottom padding on mobile for tab bar -->
       <main
-        class="mx-auto w-full max-w-7xl flex-1 px-safe p-6! pb-nav-safe sm:px-6 sm:py-6 md:pb-safe"
+        class="mx-auto w-full max-w-7xl flex-1 px-safe p-6! pb-nav-safe sm:px-6 sm:py-6 md:pb-safe max-sm:mb-15!"
       >
         <div class="page-enter">
           <router-outlet />
