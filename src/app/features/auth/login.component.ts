@@ -26,12 +26,21 @@ import { SupabaseAuthService } from '../../core/services/supabase-auth.service';
 
         <form [formGroup]="form" (ngSubmit)="submit()" class="space-y-4">
           <div>
-            <label class="mb-1 block text-sm font-medium text-slate-700">Email</label>
-            <input pInputText formControlName="email" type="email" class="w-full" placeholder="you@email.com" />
+            <label class="mb-1 block text-sm font-medium text-slate-700">ชื่อผู้ใช้</label>
+            <input
+              pInputText
+              formControlName="username"
+              class="w-full"
+              placeholder="เช่น naphat"
+              autocomplete="username"
+            />
+            @if (isSignUp) {
+              <p class="mt-1 text-xs text-slate-400">a-z, 0-9, _ ความยาว 3–20 ตัว</p>
+            }
           </div>
 
           <div>
-            <label class="mb-1 block text-sm font-medium text-slate-700">Password</label>
+            <label class="mb-1 block text-sm font-medium text-slate-700">รหัสผ่าน</label>
             <p-password
               formControlName="password"
               [feedback]="isSignUp"
@@ -39,6 +48,7 @@ import { SupabaseAuthService } from '../../core/services/supabase-auth.service';
               styleClass="w-full"
               inputStyleClass="w-full"
               placeholder="••••••••"
+              autocomplete="current-password"
             />
           </div>
 
@@ -82,7 +92,10 @@ export class LoginComponent implements OnInit {
   }
 
   readonly form = this.fb.nonNullable.group({
-    email: ['', [Validators.required, Validators.email]],
+    username: [
+      '',
+      [Validators.required, Validators.minLength(3), Validators.maxLength(20), Validators.pattern(/^[a-zA-Z0-9_]+$/)],
+    ],
     password: ['', [Validators.required, Validators.minLength(6)]],
   });
 
@@ -95,10 +108,10 @@ export class LoginComponent implements OnInit {
     if (this.form.invalid) return;
 
     this.loading = true;
-    const { email, password } = this.form.getRawValue();
+    const { username, password } = this.form.getRawValue();
     const op = this.isSignUp
-      ? this.auth.signUp(email, password)
-      : this.auth.signIn(email, password);
+      ? this.auth.signUp(username, password)
+      : this.auth.signIn(username, password);
 
     op.subscribe({
       next: () => {

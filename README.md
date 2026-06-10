@@ -22,7 +22,7 @@ npm start
 
 1. เปิด [Supabase Dashboard](https://supabase.com/dashboard/project/kwizcxeutuaawdfqlkah)
 2. **SQL Editor** → รันไฟล์ `supabase/migrations/001_initial.sql`
-3. **Authentication** → Providers → เปิด Email provider
+3. **Authentication** → Providers → เปิด Email provider → **ปิด Confirm email** (ใช้ username/password ไม่มีอีเมลจริง)
 4. **Project Settings → API** → คัดลอก:
    - Project URL: `https://kwizcxeutuaawdfqlkah.supabase.co`
    - `anon` public key

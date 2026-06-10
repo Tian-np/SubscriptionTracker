@@ -1,5 +1,5 @@
 {
-  "buildCommand": "node scripts/set-env.mjs && ng build",
+  "buildCommand": "node scripts/load-env.mjs --prod && ng build",
   "outputDirectory": "dist/SubscriptionTracker/browser",
   "framework": null,
   "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]

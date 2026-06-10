@@ -3,6 +3,12 @@ import { User } from '@supabase/supabase-js';
 import { from, map, Observable } from 'rxjs';
 
 import { environment } from '../../../environments/environment';
+import {
+  authErrorMessage,
+  emailToUsername,
+  normalizeUsername,
+  usernameToEmail,
+} from '../utils/auth.util';
 import { SupabaseService } from './supabase.service';
 
 @Injectable({ providedIn: 'root' })
@@ -14,7 +20,15 @@ export class SupabaseAuthService {
   readonly authError = signal<string | null>(null);
 
   readonly isAuthenticated = computed(() => !!this.user());
-  readonly userEmail = computed(() => this.user()?.email ?? '');
+  readonly username = computed(() => {
+    const u = this.user();
+    if (!u) return '';
+    const meta = u.user_metadata?.['username'] as string | undefined;
+    return meta ?? emailToUsername(u.email);
+  });
+
+  /** @deprecated use username() */
+  readonly userEmail = this.username;
 
   init(): void {
     if (!environment.useSupabase || !this.supabase.client) {
@@ -32,15 +46,26 @@ export class SupabaseAuthService {
     });
   }
 
-  signUp(email: string, password: string): Observable<void> {
+  signUp(username: string, password: string): Observable<void> {
+    const normalized = normalizeUsername(username);
     return this.authOp(() =>
-      this.supabase.client!.auth.signUp({ email, password }),
+      this.supabase.client!.auth.signUp({
+        email: usernameToEmail(normalized),
+        password,
+        options: {
+          data: { username: normalized },
+        },
+      }),
     );
   }
 
-  signIn(email: string, password: string): Observable<void> {
+  signIn(username: string, password: string): Observable<void> {
+    const normalized = normalizeUsername(username);
     return this.authOp(() =>
-      this.supabase.client!.auth.signInWithPassword({ email, password }),
+      this.supabase.client!.auth.signInWithPassword({
+        email: usernameToEmail(normalized),
+        password,
+      }),
     );
   }
 
@@ -57,8 +82,9 @@ export class SupabaseAuthService {
     return from(op()).pipe(
       map(({ error }) => {
         if (error) {
-          this.authError.set(error.message);
-          throw new Error(error.message);
+          const msg = authErrorMessage(error.message);
+          this.authError.set(msg);
+          throw new Error(msg);
         }
         this.authError.set(null);
       }),

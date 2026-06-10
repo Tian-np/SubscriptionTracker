@@ -71,7 +71,7 @@ import { NotificationPromptComponent } from '../notification-prompt/notification
                 severity="secondary"
                 [text]="true"
                 size="small"
-                [title]="auth.userEmail()"
+                [title]="auth.username()"
                 (onClick)="signOut()"
               />
             }
