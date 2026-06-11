@@ -1,6 +1,7 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, computed, inject, OnInit } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { Button } from 'primeng/button';
+import { ChartModule } from 'primeng/chart';
 import { Tag } from 'primeng/tag';
 
 import { NotificationService } from '../../core/services/notification.service';
@@ -12,27 +13,77 @@ import { PixelLoaderComponent } from '../../shared/components/pixel-loader/pixel
 
 @Component({
   selector: 'app-dashboard',
-  imports: [RouterLink, Button, Tag, CurrencyFormatPipe, PixelBuddyComponent, PixelLoaderComponent],
+  imports: [
+    RouterLink,
+    Button,
+    ChartModule,
+    Tag,
+    CurrencyFormatPipe,
+    PixelBuddyComponent,
+    PixelLoaderComponent,
+  ],
+  styles: `
+    .dashboard-buddy-float {
+      animation: dashboard-buddy-float 3s ease-in-out infinite;
+    }
+
+    @keyframes dashboard-buddy-float {
+      0%,
+      100% {
+        transform: translateY(0);
+      }
+      50% {
+        transform: translateY(-6px);
+      }
+    }
+  `,
   template: `
     <div class="space-y-4 sm:space-y-6">
-      <div
-        class="pixel-frame flex flex-col gap-4 rounded-xl bg-card/60 p-4 sm:flex-row sm:items-center sm:justify-between sm:p-5"
-      >
-        <div class="flex items-center gap-3 sm:gap-4">
-          <app-pixel-buddy sync [size]="52" />
-          <div>
+      <div class="pixel-frame relative overflow-visible rounded-xl bg-card/60 p-4 sm:p-5">
+        <div
+          class="dashboard-buddy-float pointer-events-none absolute -top-5 right-3 z-10 sm:-top-6 sm:right-5"
+        >
+          <app-pixel-buddy sync [size]="56" />
+        </div>
+
+        <div
+          class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between sm:gap-6"
+        >
+          <div class="min-w-0 pr-14 sm:pr-16">
             <h2 class="text-xl font-bold text-slate-100 sm:text-2xl">Dashboard</h2>
             <p class="text-xs text-slate-500 sm:text-sm">ภาพรวม subscription ของคุณในเดือนนี้ ✨</p>
           </div>
+
+          @if (!store.loading() && store.categoryBreakdown().length > 0) {
+            <div class="relative mx-auto w-36 shrink-0 sm:mx-0 sm:w-40">
+              <p-chart
+                type="doughnut"
+                [data]="categoryChartData()"
+                [options]="categoryChartOptions"
+                class="h-36 sm:h-40"
+              />
+              <div
+                class="pointer-events-none absolute inset-0 flex flex-col items-center justify-center"
+              >
+                <p class="text-[10px] font-medium uppercase tracking-wide text-slate-500">
+                  รวมต่อเดือน
+                </p>
+                <p class="text-sm font-bold text-slate-100">
+                  {{ store.monthlyTotal() | currencyFormat: store.baseCurrency() }}
+                </p>
+              </div>
+            </div>
+          }
+
+          <p-button
+            label="เพิ่ม Subscription"
+            icon="pi pi-plus"
+            routerLink="/subscriptions"
+            [queryParams]="{ action: 'add' }"
+            styleClass="w-full sm:w-auto"
+            class="btn-mobile-full hidden sm:inline-flex"
+          />
         </div>
-        <p-button
-          label="เพิ่ม Subscription"
-          icon="pi pi-plus"
-          routerLink="/subscriptions"
-          [queryParams]="{ action: 'add' }"
-          styleClass="w-full sm:w-auto"
-          class="btn-mobile-full hidden sm:inline-flex"
-        />
       </div>
 
       @if (store.loading()) {
@@ -274,7 +325,48 @@ export class DashboardComponent implements OnInit {
   readonly store = inject(SubscriptionStore);
   private readonly notificationService = inject(NotificationService);
 
+  readonly categoryChartData = computed(() => {
+    const breakdown = this.store.categoryBreakdown();
+    return {
+      labels: breakdown.map((item) => item.category.name),
+      datasets: [
+        {
+          data: breakdown.map((item) => item.total),
+          backgroundColor: breakdown.map((item) => item.category.color),
+          hoverBackgroundColor: breakdown.map((item) => item.category.color),
+          borderWidth: 0,
+        },
+      ],
+    };
+  });
+
+  categoryChartOptions: Record<string, unknown> = {};
+
   ngOnInit(): void {
+    this.categoryChartOptions = {
+      cutout: '70%',
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: '#1a2744',
+          titleColor: '#e2e8f0',
+          bodyColor: '#cbd5e1',
+          borderColor: '#243352',
+          borderWidth: 1,
+          padding: 10,
+          callbacks: {
+            label: (ctx: { parsed: number; label?: string }) => {
+              const total = this.store.monthlyTotal();
+              const pct = total > 0 ? ((ctx.parsed / total) * 100).toFixed(1) : '0';
+              const amount = formatCurrency(ctx.parsed, this.store.baseCurrency());
+              return ` ${ctx.label}: ${amount} (${pct}%)`;
+            },
+          },
+        },
+      },
+    };
+
     if (this.store.subscriptions().length === 0) {
       this.store.loadAll();
     }
